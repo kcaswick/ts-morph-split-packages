@@ -1,4 +1,5 @@
 # ts-morph-split-packages [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-image]][daviddm-url]
+
 > Use depedency maps to break up TypeScript repos into smaller packages
 
 ## Installation
@@ -10,14 +11,14 @@ $ npm install --save ts-morph-split-packages
 ## Usage
 
 ```js
-const tsMorphSplitPackages = require('ts-morph-split-packages');
+const tsMorphSplitPackages = require("ts-morph-split-packages");
 
-tsMorphSplitPackages('Rainbow');
+tsMorphSplitPackages("Rainbow");
 ```
+
 ## License
 
 MIT © [Kevin L Caswick]()
-
 
 [npm-image]: https://badge.fury.io/js/ts-morph-split-packages.svg
 [npm-url]: https://npmjs.org/package/ts-morph-split-packages
