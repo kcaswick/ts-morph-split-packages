@@ -1,25 +1,24 @@
 {
-  "extends": "./node_modules/@microsoft/rush-stack-compiler-4.5/includes/tsconfig-web.json",
   "compilerOptions": {
-    "target": "es6",
+    "target": "ES2022",
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "jsx": "react",
     "declaration": true,
     "sourceMap": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "outDir": "lib",
+    "outDir": "dist",
     "inlineSources": false,
+    "alwaysStrict": true,
     "strictBindCallApply": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "noUnusedLocals": false,
-    "typeRoots": ["./node_modules/@types", "./node_modules/@microsoft"],
-    "types": ["webpack-env", "@types/jest"],
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["@types/jest"],
     "lib": ["es6", "dom", "DOM.Iterable", "es2015.collection", "es2018", "ES2019"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"]
+  "include": ["lib/**/*.ts", "lib/**/*.tsx"]
 }
