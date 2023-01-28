@@ -49,7 +49,7 @@ export class PackageMapping {
   }
 
   public MapPackage(oldPath: string): ILocation {
-    for (const oldPattern in this.config.OldPatterns?.keys()) {
+    for (const oldPattern of this.config.OldPatterns?.keys()) {
       if (new RegExp(oldPattern).test(oldPath)) {
         let nw: ILocation = { ...EmptyLocation, ...this.config.OldPatterns.get(oldPattern) };
         nw.Path = oldPath.replace(oldPattern, nw.Path ?? "");
@@ -81,5 +81,7 @@ export class PackageMapping {
       Name: { OldName: x[0], New: this.MapPackage(x[0]) },
       dependentMap: x[1].map((y) => ({ OldName: y, New: this.MapPackage(y) })),
     }));
+
+    return this;
   }
 }
