@@ -8,9 +8,10 @@
     "email": "24442686+kcaswick@users.noreply.github.com"
   },
   "files": [
-    "lib"
+    "dist", "lib"
   ],
-  "main": "lib/index.js",
+  "main": "dist/cjs/index.cjs",
+  "module": "dist/esm/index.mjs",
   "keywords": [
     "code refactor",
     "typescript",
@@ -23,6 +24,7 @@
     "pretest": "eslint .",
     "prepare": "husky install",
     "prettify": "prettier --write .",
+    "rollup": "rollup -c rollup.config.mjs",
     "test": "jest"
   },
   "dependencies": {
@@ -30,6 +32,9 @@
     "fs-extra": "^11.1.0"
   },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.1",
+    "@rollup/plugin-node-resolve": "^15.0.1",
+    "@rollup/plugin-typescript": "^11.0.0",
     "@types/fs-extra": "^11.0.1",
     "@types/jest": "27.5.1",
     "@types/node": "16.11.7",
@@ -46,6 +51,8 @@
     "lint-staged": "^12.3.2",
     "nerdbank-gitversioning": "^3.5.119",
     "prettier": "^2.7.1",
+    "rollup": "^3.11.0",
+    "rollup-plugin-dts": "^5.1.1",
     "ts-jest": "27.1.4",
     "typescript": "~4.5.5"
   },
@@ -110,5 +117,6 @@
   "jest": {
     "testEnvironment": "node"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "types": "dist/bundle.d.ts"
 }
