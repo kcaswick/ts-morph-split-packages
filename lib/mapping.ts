@@ -1,7 +1,7 @@
 import * as fs from "fs-extra";
 
 export type IConfigJson = {
-  OldPatterns: { [name: string]: ILocation };
+  OldPatterns: Record<string, ILocation>;
 };
 
 export type ILocation = {
@@ -27,18 +27,18 @@ export class PackageMapping {
   depMap: {
     Name: IMapResult;
     dependencyMap: IMapResult[];
-  }[];
+  }[] = [];
   invdepMap: {
     Name: IMapResult;
     dependentMap: IMapResult[];
-  }[];
+  }[] = [];
 
   public Export() {
     // TODO: Export to JSON
   }
 
-  public InverseDependencies(dependencyList: { [name: string]: string[] }) {
-    let dependents = new Map<string, string[]>();
+  public InverseDependencies(dependencyList: Record<string, string[]>) {
+    let dependents: Record<string, string[]> = {};
     Object.entries(dependencyList).map((p) => {
       p[1].map((_: string | number) => {
         dependents[_] ??= new Array();
@@ -64,7 +64,7 @@ export class PackageMapping {
     configPath = "./PackageMap.json"
   ) {
     let packageMap: IConfigJson = fs.readJsonSync(configPath);
-    let dep2: { [name: string]: string[] } = fs.readJsonSync(dependencyJsonPath);
+    let dep2: Record<string, string[]> = fs.readJsonSync(dependencyJsonPath);
 
     let dependents = this.InverseDependencies(dep2);
 
@@ -77,7 +77,7 @@ export class PackageMapping {
       dependencyMap: x[1].map((y) => ({ OldName: y, New: this.MapPackage(y) })),
     }));
 
-    this.invdepMap = [...dependents.entries()].map((x) => ({
+    this.invdepMap = Object.entries(dependents).map((x) => ({
       Name: { OldName: x[0], New: this.MapPackage(x[0]) },
       dependentMap: x[1].map((y) => ({ OldName: y, New: this.MapPackage(y) })),
     }));
