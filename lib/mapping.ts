@@ -37,10 +37,19 @@ export class PackageMapping {
     // TODO: Export to JSON
   }
 
-  public InverseDependencies(dependencyList) {}
+  public InverseDependencies(dependencyList: { [name: string]: string[] }) {
+    let dependents = new Map<string, string[]>();
+    Object.entries(dependencyList).map((p) => {
+      p[1].map((_: string | number) => {
+        dependents[_] ??= new Array();
+        dependents[_].push(p[0]);
+      });
+    });
+    return dependents;
+  }
 
   public MapPackage(oldPath: string): ILocation {
-    for (const oldPattern of this.config.OldPatterns?.keys()) {
+    for (const oldPattern in this.config.OldPatterns?.keys()) {
       if (new RegExp(oldPattern).test(oldPath)) {
         let nw: ILocation = { ...EmptyLocation, ...this.config.OldPatterns.get(oldPattern) };
         nw.Path = oldPath.replace(oldPattern, nw.Path ?? "");
@@ -57,13 +66,7 @@ export class PackageMapping {
     let packageMap: IConfigJson = fs.readJsonSync(configPath);
     let dep2: { [name: string]: string[] } = fs.readJsonSync(dependencyJsonPath);
 
-    let dependents = new Map<string, string[]>();
-    Object.entries(dep2).map((p) => {
-      p[1].map((_) => {
-        dependents[_] ??= new Array();
-        dependents[_].push(p[0]);
-      });
-    });
+    let dependents = this.InverseDependencies(dep2);
 
     Object.entries(packageMap.OldPatterns)
       .sort((a, b) => (a[1].Order ?? 0) - (b[1].Order ?? 0))
