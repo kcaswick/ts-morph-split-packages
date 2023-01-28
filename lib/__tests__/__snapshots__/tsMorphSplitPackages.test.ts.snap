@@ -1,0 +1,210 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tsMorphSplitPackages basic tests test loading simpleMadgeTestData 1`] = `
+PackageMapping {
+  "config": Config {
+    "OldPatterns": Map {
+      "dist" => Object {
+        "Package": "new",
+        "Path": "src",
+        "Repo": "new",
+      },
+      "lib" => Object {
+        "Package": "N/A",
+        "Path": "lib",
+        "Repo": "ts-morph-split-packages",
+      },
+    },
+  },
+  "depMap": Array [
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/bundle.d.ts",
+          "Repo": "new",
+        },
+        "OldName": "dist/bundle.d.ts",
+      },
+      "dependencyMap": Array [],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/cjs/index.cjs",
+          "Repo": "new",
+        },
+        "OldName": "dist/cjs/index.cjs",
+      },
+      "dependencyMap": Array [],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/esm/index.mjs",
+          "Repo": "new",
+        },
+        "OldName": "dist/esm/index.mjs",
+      },
+      "dependencyMap": Array [],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/index.d.ts",
+          "Repo": "new",
+        },
+        "OldName": "dist/index.d.ts",
+      },
+      "dependencyMap": Array [
+        Object {
+          "New": Object {
+            "Package": "new",
+            "Path": "src/mapping.d.ts",
+            "Repo": "new",
+          },
+          "OldName": "dist/mapping.d.ts",
+        },
+      ],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/index.js",
+          "Repo": "new",
+        },
+        "OldName": "dist/index.js",
+      },
+      "dependencyMap": Array [
+        Object {
+          "New": Object {
+            "Package": "new",
+            "Path": "src/mapping.js",
+            "Repo": "new",
+          },
+          "OldName": "dist/mapping.js",
+        },
+      ],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/mapping.d.ts",
+          "Repo": "new",
+        },
+        "OldName": "dist/mapping.d.ts",
+      },
+      "dependencyMap": Array [],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/mapping.js",
+          "Repo": "new",
+        },
+        "OldName": "dist/mapping.js",
+      },
+      "dependencyMap": Array [],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "N/A",
+          "Path": "lib/index.ts",
+          "Repo": "ts-morph-split-packages",
+        },
+        "OldName": "lib/index.ts",
+      },
+      "dependencyMap": Array [
+        Object {
+          "New": Object {
+            "Package": "N/A",
+            "Path": "lib/mapping.ts",
+            "Repo": "ts-morph-split-packages",
+          },
+          "OldName": "lib/mapping.ts",
+        },
+      ],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "N/A",
+          "Path": "lib/mapping.ts",
+          "Repo": "ts-morph-split-packages",
+        },
+        "OldName": "lib/mapping.ts",
+      },
+      "dependencyMap": Array [],
+    },
+  ],
+  "invdepMap": Array [
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/mapping.d.ts",
+          "Repo": "new",
+        },
+        "OldName": "dist/mapping.d.ts",
+      },
+      "dependentMap": Array [
+        Object {
+          "New": Object {
+            "Package": "new",
+            "Path": "src/index.d.ts",
+            "Repo": "new",
+          },
+          "OldName": "dist/index.d.ts",
+        },
+      ],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "new",
+          "Path": "src/mapping.js",
+          "Repo": "new",
+        },
+        "OldName": "dist/mapping.js",
+      },
+      "dependentMap": Array [
+        Object {
+          "New": Object {
+            "Package": "new",
+            "Path": "src/index.js",
+            "Repo": "new",
+          },
+          "OldName": "dist/index.js",
+        },
+      ],
+    },
+    Object {
+      "Name": Object {
+        "New": Object {
+          "Package": "N/A",
+          "Path": "lib/mapping.ts",
+          "Repo": "ts-morph-split-packages",
+        },
+        "OldName": "lib/mapping.ts",
+      },
+      "dependentMap": Array [
+        Object {
+          "New": Object {
+            "Package": "N/A",
+            "Path": "lib/index.ts",
+            "Repo": "ts-morph-split-packages",
+          },
+          "OldName": "lib/index.ts",
+        },
+      ],
+    },
+  ],
+}
+`;

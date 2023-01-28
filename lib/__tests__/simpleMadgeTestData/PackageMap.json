@@ -1,0 +1,14 @@
+{
+  "OldPatterns": {
+    "dist": {
+      "Path": "src",
+      "Repo": "new",
+      "Package": "new"
+    },
+    "lib": {
+      "Path": "lib",
+      "Repo": "ts-morph-split-packages",
+      "Package": "N/A"
+    }
+  }
+}

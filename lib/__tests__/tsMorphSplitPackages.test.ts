@@ -1,12 +1,14 @@
-import assert from "assert";
-import { createWriteStream, writeFile } from "fs";
+// X import assert from "assert";
+import { createWriteStream } from "fs";
 import madge from "madge";
-import { PackageMapping } from "../index.js";
+import { promisify } from "util";
+import { PackageMapping } from "../index";
 
 describe("tsMorphSplitPackages basic tests", () => {
+  const simpleMadgeConfigPath = "lib/__tests__/simpleMadgeTestData/PackageMap.json";
+  const simpleMadgeDependenciesPath = "lib/__tests__/simpleMadgeTestData/selfMadge.json";
+
   it("generate simpleMadgeTestData", async () => {
-    // Let process = $`madge --ts-config tsconfig.json --extensions ts,tsx,js,jsx --warning --basedir . lib/index.ts ./dist/cjs/index.cjs dist/esm/index.mjs ./dist/index.js ./dist/index.d.ts ./dist/bundle.d.ts --json | tee lib/__tests__/simpleMadgeTestData/selfMadge.json`;
-    // let process = $`   --json | tee lib/__tests__`;
     const m = await madge(
       [
         "lib/index.ts",
@@ -22,19 +24,56 @@ describe("tsMorphSplitPackages basic tests", () => {
         tsConfig: "tsconfig.json",
       }
     );
-    console.warn(m.warnings);
+    expect(m.warnings()).toMatchInlineSnapshot(`
+      Object {
+        "skipped": Array [],
+      }
+    `);
 
-    const dependencies = m.obj;
+    const dependencies = m.obj();
+    expect(dependencies).toBeDefined();
 
-    // WriteFile("./simpleMadgeTestData/selfMadge.json", JSON.stringify(dependencies));
-
-    const s = createWriteStream("./simpleMadgeTestData/selfMadge.json");
-    s.write(JSON.stringify(dependencies), (err) => {
+    const s = createWriteStream(simpleMadgeDependenciesPath, {
+      flags: "w+",
+    });
+    try {
+      const dependenciesJson = JSON.stringify(dependencies, undefined, 2);
+      await promisify(
+        // eslint-disable-next-line no-unused-vars
+        s.write.bind(s) as (chunk: string, _?: (error: Error | null | undefined) => void) => boolean
+      )(dependenciesJson);
+    } catch (err) {
       if (err) {
         console.error(err);
       }
-
+    } finally {
       s.close();
+    }
+  });
+
+  function loadSimpleMadge() {
+    const m = new PackageMapping();
+    m.getPackageMap(simpleMadgeDependenciesPath, simpleMadgeConfigPath);
+    return m;
+  }
+
+  it("test loading simpleMadgeTestData", () => {
+    const m = loadSimpleMadge();
+    expect(m).toMatchSnapshot();
+  });
+
+  it("test mapPackage", () => {
+    const m = loadSimpleMadge();
+    const result = m.mapPackage("dist/index.js");
+    expect(result).toBeDefined();
+    expect(result.Path).toBe("src/index.js");
+    expect(result).toMatchObject({
+      Path: "src/index.js",
+      Repo: "new",
+      Package: "new",
     });
   });
+
+  it.todo("test bad config filename");
+  it.todo("test bad dependency filename");
 });

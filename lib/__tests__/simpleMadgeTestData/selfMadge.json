@@ -2,10 +2,16 @@
   "dist/bundle.d.ts": [],
   "dist/cjs/index.cjs": [],
   "dist/esm/index.mjs": [],
-  "dist/index.d.ts": ["dist/mapping.d.ts"],
-  "dist/index.js": ["dist/mapping.js"],
+  "dist/index.d.ts": [
+    "dist/mapping.d.ts"
+  ],
+  "dist/index.js": [
+    "dist/mapping.js"
+  ],
   "dist/mapping.d.ts": [],
   "dist/mapping.js": [],
-  "lib/index.ts": ["lib/mapping.ts"],
+  "lib/index.ts": [
+    "lib/mapping.ts"
+  ],
   "lib/mapping.ts": []
 }
