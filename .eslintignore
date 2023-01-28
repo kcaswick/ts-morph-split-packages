@@ -1,1 +1,6 @@
 coverage
+dist
+node_modules
+release
+solution
+temp

@@ -28,6 +28,7 @@ export class PackageMapping {
     Name: IMapResult;
     dependencyMap: IMapResult[];
   }[] = [];
+
   invdepMap: {
     Name: IMapResult;
     dependentMap: IMapResult[];
@@ -37,49 +38,50 @@ export class PackageMapping {
     // TODO: Export to JSON
   }
 
-  public InverseDependencies(dependencyList: Record<string, string[]>) {
-    let dependents: Record<string, string[]> = {};
-    Object.entries(dependencyList).map((p) => {
-      p[1].map((_: string | number) => {
-        dependents[_] ??= new Array();
+  public inverseDependencies(dependencyList: Record<string, string[]>) {
+    const dependents: Record<string, string[]> = {};
+    Object.entries(dependencyList).forEach((p) => {
+      p[1].forEach((_: string | number) => {
+        dependents[_] ??= [];
         dependents[_].push(p[0]);
       });
     });
     return dependents;
   }
 
-  public MapPackage(oldPath: string): ILocation {
-    for (const oldPattern of this.config.OldPatterns?.keys()) {
+  public mapPackage(oldPath: string): ILocation {
+    for (const oldPattern of this.config.OldPatterns.keys()) {
       if (new RegExp(oldPattern).test(oldPath)) {
-        let nw: ILocation = { ...EmptyLocation, ...this.config.OldPatterns.get(oldPattern) };
+        const nw: ILocation = { ...EmptyLocation, ...this.config.OldPatterns.get(oldPattern) };
         nw.Path = oldPath.replace(oldPattern, nw.Path ?? "");
         return nw ?? EmptyLocation;
       }
     }
+
     return EmptyLocation;
   }
 
-  public GetPackageMap(
+  public getPackageMap(
     dependencyJsonPath = "doc/dependency.json",
     configPath = "./PackageMap.json"
   ) {
-    let packageMap: IConfigJson = fs.readJsonSync(configPath);
-    let dep2: Record<string, string[]> = fs.readJsonSync(dependencyJsonPath);
+    const packageMap: IConfigJson = fs.readJsonSync(configPath);
+    const dep2: Record<string, string[]> = fs.readJsonSync(dependencyJsonPath);
 
-    let dependents = this.InverseDependencies(dep2);
+    const dependents = this.inverseDependencies(dep2);
 
     Object.entries(packageMap.OldPatterns)
       .sort((a, b) => (a[1].Order ?? 0) - (b[1].Order ?? 0))
       .forEach((x) => this.config.OldPatterns.set(...x));
 
     this.depMap = Object.entries(dep2).map((x) => ({
-      Name: { OldName: x[0], New: this.MapPackage(x[0]) },
-      dependencyMap: x[1].map((y) => ({ OldName: y, New: this.MapPackage(y) })),
+      Name: { OldName: x[0], New: this.mapPackage(x[0]) },
+      dependencyMap: x[1].map((y) => ({ OldName: y, New: this.mapPackage(y) })),
     }));
 
     this.invdepMap = Object.entries(dependents).map((x) => ({
-      Name: { OldName: x[0], New: this.MapPackage(x[0]) },
-      dependentMap: x[1].map((y) => ({ OldName: y, New: this.MapPackage(y) })),
+      Name: { OldName: x[0], New: this.mapPackage(x[0]) },
+      dependentMap: x[1].map((y) => ({ OldName: y, New: this.mapPackage(y) })),
     }));
 
     return this;

@@ -48,7 +48,9 @@
     "eslint-plugin-simple-import-sort": "^7.0.0",
     "husky": "^7.0.4",
     "jest": "^27.5.1",
+    "jest-expect-message": "^1.1.3",
     "jest-extended": "^3.1.0",
+    "jest-junit": "^15.0.0",
     "lint-staged": "^12.3.2",
     "nerdbank-gitversioning": "^3.5.119",
     "prettier": "^2.7.1",
@@ -57,17 +59,9 @@
     "ts-jest": "27.1.4",
     "typescript": "~4.5.5"
   },
-  "peerDependencies": {
-    "dependency-cruiser": "^12.6.0",
-    "madge": "^5.0.1"
-  },
-  "peerDependenciesMeta": {
-    "dependency-cruiser": {
-      "optional": true
-    },
-    "madge": {
-      "optional": true
-    }
+  "optionalDependencies": {
+    "@types/madge": "^5.0.0",
+    "madge": "^5.0.2"
   },
   "engines": {
     "npm": ">= 4.0.0"
@@ -107,8 +101,7 @@
       "deprecation",
       "@typescript-eslint",
       "prettier",
-      "simple-import-sort",
-      "testing-library"
+      "simple-import-sort"
     ],
     "reportUnusedDisableDirectives": true,
     "extends": [
@@ -128,7 +121,50 @@
   },
   "repository": "kcaswick/ts-morph-split-packages",
   "jest": {
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "coverageDirectory": "<rootDir>/../temp/test",
+    "collectCoverageFrom": [
+      "<rootDir>/**/*.{ts,tsx}"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text-summary"
+    ],
+    "globals": {
+      "ts-jest": {
+        "diagnostics": {
+          "ignoreCodes": "TS151001"
+        }
+      }
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ],
+    "reporters": [
+      "default",
+      [
+        "jest-junit",
+        {
+          "outputDirectory": "temp/test",
+          "outputName": "junit.xml"
+        }
+      ]
+    ],
+    "setupFilesAfterEnv": [
+      "jest-expect-message"
+    ],
+    "testMatch": [
+      "**/src/**/*.(spec|test).+(ts|js)?(x)",
+      "**/__tests__/**/*.(spec|test).+(ts|js)?(x)"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    }
   },
   "license": "MIT",
   "types": "dist/bundle.d.ts"
