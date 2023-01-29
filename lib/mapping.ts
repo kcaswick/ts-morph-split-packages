@@ -15,7 +15,7 @@ const EmptyLocation: ILocation = { Repo: "", Package: "", Path: "" };
 
 export type IMapResult = {
   OldName: string;
-  New: ILocation;
+  New?: ILocation;
 };
 
 export class Config {
@@ -49,16 +49,16 @@ export class PackageMapping {
     return dependents;
   }
 
-  public mapPackage(oldPath: string): ILocation {
+  public mapPackage(oldPath: string): ILocation | undefined {
     for (const oldPattern of this.config.OldPatterns.keys()) {
       if (new RegExp(oldPattern).test(oldPath)) {
         const nw: ILocation = { ...EmptyLocation, ...this.config.OldPatterns.get(oldPattern) };
         nw.Path = oldPath.replace(oldPattern, nw.Path ?? "");
-        return nw ?? EmptyLocation;
+        return nw;
       }
     }
 
-    return EmptyLocation;
+    return undefined;
   }
 
   public getPackageMap(

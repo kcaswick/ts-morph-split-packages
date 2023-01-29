@@ -66,7 +66,7 @@ describe("tsMorphSplitPackages basic tests", () => {
     const m = loadSimpleMadge();
     const result = m.mapPackage("dist/index.js");
     expect(result).toBeDefined();
-    expect(result.Path).toBe("src/index.js");
+    expect(result?.Path).toBe("src/index.js");
     expect(result).toMatchObject({
       Path: "src/index.js",
       Repo: "new",
