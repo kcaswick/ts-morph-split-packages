@@ -18,190 +18,262 @@ PackageMapping {
   },
   "depMap": Array [
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/bundle.d.ts",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/bundle.d.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/cjs/index.cjs",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/cjs/index.cjs",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/esm/index.mjs",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/esm/index.mjs",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/index.d.ts",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/index.d.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [
-        Object {
-          "New": Object {
+        MapResult {
+          "New": Location {
+            "Order": 0,
             "Package": "new",
             "Path": "src/mapping.d.ts",
             "Repo": "new",
+            "toString": [Function],
           },
           "OldName": "dist/mapping.d.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
         },
       ],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/index.js",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/index.js",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [
-        Object {
-          "New": Object {
+        MapResult {
+          "New": Location {
+            "Order": 0,
             "Package": "new",
             "Path": "src/mapping.js",
             "Repo": "new",
+            "toString": [Function],
           },
           "OldName": "dist/mapping.js",
+          "isUnmapped": [Function],
+          "toString": [Function],
         },
       ],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/mapping.d.ts",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/mapping.d.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/mapping.js",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/mapping.js",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "N/A",
           "Path": "lib/index.ts",
           "Repo": "ts-morph-split-packages",
+          "toString": [Function],
         },
         "OldName": "lib/index.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [
-        Object {
-          "New": Object {
+        MapResult {
+          "New": Location {
+            "Order": 0,
             "Package": "N/A",
             "Path": "lib/mapping.ts",
             "Repo": "ts-morph-split-packages",
+            "toString": [Function],
           },
           "OldName": "lib/mapping.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
         },
       ],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "N/A",
           "Path": "lib/mapping.ts",
           "Repo": "ts-morph-split-packages",
+          "toString": [Function],
         },
         "OldName": "lib/mapping.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependencyMap": Array [],
     },
   ],
   "invdepMap": Array [
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/mapping.d.ts",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/mapping.d.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependentMap": Array [
-        Object {
-          "New": Object {
+        MapResult {
+          "New": Location {
+            "Order": 0,
             "Package": "new",
             "Path": "src/index.d.ts",
             "Repo": "new",
+            "toString": [Function],
           },
           "OldName": "dist/index.d.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
         },
       ],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "new",
           "Path": "src/mapping.js",
           "Repo": "new",
+          "toString": [Function],
         },
         "OldName": "dist/mapping.js",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependentMap": Array [
-        Object {
-          "New": Object {
+        MapResult {
+          "New": Location {
+            "Order": 0,
             "Package": "new",
             "Path": "src/index.js",
             "Repo": "new",
+            "toString": [Function],
           },
           "OldName": "dist/index.js",
+          "isUnmapped": [Function],
+          "toString": [Function],
         },
       ],
     },
     Object {
-      "Name": Object {
-        "New": Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
           "Package": "N/A",
           "Path": "lib/mapping.ts",
           "Repo": "ts-morph-split-packages",
+          "toString": [Function],
         },
         "OldName": "lib/mapping.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
       },
       "dependentMap": Array [
-        Object {
-          "New": Object {
+        MapResult {
+          "New": Location {
+            "Order": 0,
             "Package": "N/A",
             "Path": "lib/index.ts",
             "Repo": "ts-morph-split-packages",
+            "toString": [Function],
           },
           "OldName": "lib/index.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
         },
       ],
     },
