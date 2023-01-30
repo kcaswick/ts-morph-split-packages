@@ -92,8 +92,29 @@ export class PackageMapping {
     dependentMap: MapResult[];
   }[] = [];
 
-  public Export() {
-    // TODO: Export to JSON
+  public export() {
+    let output = this.depMap.map(($_) => ({
+      OldName: $_.Name.OldName,
+      NewRepo: $_.Name.New?.Repo,
+      NewPackage: $_.Name.New?.Package,
+      NewName: $_.Name.New?.Path,
+      "Dependency Count": $_.dependencyMap.length,
+      "Package Dependencies": $_.dependencyMap
+        .map(($_) => $_.New?.Package ?? "N/A")
+        .sort()
+        .filter((value, index, self) => self.indexOf(value) === index)
+        .filter((value) => value !== $_.Name.New?.Package),
+      dependencies: $_.dependencyMap.map(($_) =>
+        undefined === $_.New ? $_.OldName : $_.New?.Repo + ":" + $_.New?.Path
+      ),
+    }));
+    output = output.sort((a, b) =>
+      (`${a.NewRepo}${a.NewName}` ?? a.OldName ?? "").localeCompare(
+        `${b.NewRepo}${b.NewName}` ?? b.OldName
+      )
+    );
+
+    return JSON.stringify(output, undefined, 2);
   }
 
   public inverseDependencies(dependencyList: Record<string, string[]>) {

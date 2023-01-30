@@ -116,7 +116,7 @@
       "node": true
     },
     "rules": {
-      "prettier/prettier": "error"
+      "prettier/prettier": "warn"
     }
   },
   "repository": "kcaswick/ts-morph-split-packages",

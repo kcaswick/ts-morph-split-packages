@@ -74,6 +74,108 @@ describe("tsMorphSplitPackages basic tests", () => {
     });
   });
 
+  it("test Export", () => {
+    const m = loadSimpleMadge();
+    const result = m.export();
+    expect(result).toMatchInlineSnapshot(`
+      "[
+        {
+          \\"OldName\\": \\"dist/bundle.d.ts\\",
+          \\"NewRepo\\": \\"new\\",
+          \\"NewPackage\\": \\"new\\",
+          \\"NewName\\": \\"src/bundle.d.ts\\",
+          \\"Dependency Count\\": 0,
+          \\"Package Dependencies\\": [],
+          \\"dependencies\\": []
+        },
+        {
+          \\"OldName\\": \\"dist/cjs/index.cjs\\",
+          \\"NewRepo\\": \\"new\\",
+          \\"NewPackage\\": \\"new\\",
+          \\"NewName\\": \\"src/cjs/index.cjs\\",
+          \\"Dependency Count\\": 0,
+          \\"Package Dependencies\\": [],
+          \\"dependencies\\": []
+        },
+        {
+          \\"OldName\\": \\"dist/esm/index.mjs\\",
+          \\"NewRepo\\": \\"new\\",
+          \\"NewPackage\\": \\"new\\",
+          \\"NewName\\": \\"src/esm/index.mjs\\",
+          \\"Dependency Count\\": 0,
+          \\"Package Dependencies\\": [],
+          \\"dependencies\\": []
+        },
+        {
+          \\"OldName\\": \\"dist/index.d.ts\\",
+          \\"NewRepo\\": \\"new\\",
+          \\"NewPackage\\": \\"new\\",
+          \\"NewName\\": \\"src/index.d.ts\\",
+          \\"Dependency Count\\": 1,
+          \\"Package Dependencies\\": [
+            \\"new\\"
+          ],
+          \\"dependencies\\": [
+            \\"new:src/mapping.d.ts\\"
+          ]
+        },
+        {
+          \\"OldName\\": \\"dist/index.js\\",
+          \\"NewRepo\\": \\"new\\",
+          \\"NewPackage\\": \\"new\\",
+          \\"NewName\\": \\"src/index.js\\",
+          \\"Dependency Count\\": 1,
+          \\"Package Dependencies\\": [
+            \\"new\\"
+          ],
+          \\"dependencies\\": [
+            \\"new:src/mapping.js\\"
+          ]
+        },
+        {
+          \\"OldName\\": \\"dist/mapping.d.ts\\",
+          \\"NewRepo\\": \\"new\\",
+          \\"NewPackage\\": \\"new\\",
+          \\"NewName\\": \\"src/mapping.d.ts\\",
+          \\"Dependency Count\\": 0,
+          \\"Package Dependencies\\": [],
+          \\"dependencies\\": []
+        },
+        {
+          \\"OldName\\": \\"dist/mapping.js\\",
+          \\"NewRepo\\": \\"new\\",
+          \\"NewPackage\\": \\"new\\",
+          \\"NewName\\": \\"src/mapping.js\\",
+          \\"Dependency Count\\": 0,
+          \\"Package Dependencies\\": [],
+          \\"dependencies\\": []
+        },
+        {
+          \\"OldName\\": \\"lib/index.ts\\",
+          \\"NewRepo\\": \\"ts-morph-split-packages\\",
+          \\"NewPackage\\": \\"N/A\\",
+          \\"NewName\\": \\"lib/index.ts\\",
+          \\"Dependency Count\\": 1,
+          \\"Package Dependencies\\": [
+            \\"N/A\\"
+          ],
+          \\"dependencies\\": [
+            \\"ts-morph-split-packages:lib/mapping.ts\\"
+          ]
+        },
+        {
+          \\"OldName\\": \\"lib/mapping.ts\\",
+          \\"NewRepo\\": \\"ts-morph-split-packages\\",
+          \\"NewPackage\\": \\"N/A\\",
+          \\"NewName\\": \\"lib/mapping.ts\\",
+          \\"Dependency Count\\": 0,
+          \\"Package Dependencies\\": [],
+          \\"dependencies\\": []
+        }
+      ]"
+    `);
+  });
+
   it.todo("test bad config filename");
   it.todo("test bad dependency filename");
 });
