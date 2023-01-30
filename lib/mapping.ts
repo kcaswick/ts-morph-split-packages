@@ -1,8 +1,15 @@
 import * as fs from "fs-extra";
+import { ICruiseResult } from "dependency-cruiser";
 
 export type IConfigJson = {
   OldPatterns: Record<string, Location>;
 };
+
+type IMadgeDependencies = Record<string, string[]>;
+
+function isICruiseResult(o: unknown): o is ICruiseResult {
+  return typeof o === "object" && o !== null && "modules" in o && "summary" in o;
+}
 
 export type ILocation = {
   Repo: string;
@@ -149,7 +156,25 @@ export class PackageMapping {
     configPath = "./PackageMap.json"
   ) {
     const packageMap: IConfigJson = fs.readJsonSync(configPath);
-    const dep2: Record<string, string[]> = fs.readJsonSync(dependencyJsonPath);
+
+    const dependenciesJson: IMadgeDependencies | ICruiseResult =
+      fs.readJsonSync(dependencyJsonPath);
+
+    const dep2: Record<string, string[]> = isICruiseResult(dependenciesJson)
+      ? Object.fromEntries(
+          dependenciesJson.modules
+            .map((m) => [
+              m.source,
+              m.dependencies
+                .map((d) => d.resolved)
+                .filter(
+                  (s) =>
+                    s && !(s.startsWith("node_modules") || s.startsWith("@") || s.endsWith(".css"))
+                ) ?? [],
+            ])
+            .values()
+        )
+      : dependenciesJson;
 
     const dependents = this.inverseDependencies(dep2);
 

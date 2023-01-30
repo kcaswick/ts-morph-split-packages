@@ -112,9 +112,7 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"NewPackage\\": \\"new\\",
           \\"NewName\\": \\"src/index.d.ts\\",
           \\"Dependency Count\\": 1,
-          \\"Package Dependencies\\": [
-            \\"new\\"
-          ],
+          \\"Package Dependencies\\": [],
           \\"dependencies\\": [
             \\"new:src/mapping.d.ts\\"
           ]
@@ -125,9 +123,7 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"NewPackage\\": \\"new\\",
           \\"NewName\\": \\"src/index.js\\",
           \\"Dependency Count\\": 1,
-          \\"Package Dependencies\\": [
-            \\"new\\"
-          ],
+          \\"Package Dependencies\\": [],
           \\"dependencies\\": [
             \\"new:src/mapping.js\\"
           ]
@@ -156,9 +152,7 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"NewPackage\\": \\"N/A\\",
           \\"NewName\\": \\"lib/index.ts\\",
           \\"Dependency Count\\": 1,
-          \\"Package Dependencies\\": [
-            \\"N/A\\"
-          ],
+          \\"Package Dependencies\\": [],
           \\"dependencies\\": [
             \\"ts-morph-split-packages:lib/mapping.ts\\"
           ]
