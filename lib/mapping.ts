@@ -124,6 +124,26 @@ export class PackageMapping {
     return JSON.stringify(output, undefined, 2);
   }
 
+  public exportPackageDependenciesChart(): IMadgeDependencies {
+    const output: IMadgeDependencies = {};
+    this.depMap.forEach((x) => {
+      const packageName =
+        (x.Name.New?.Package === "N/A" ? x.Name.New?.Repo : x.Name.New?.Package) ?? "N/A";
+      output[packageName] ??= [];
+      x.dependencyMap
+        .map((d) => (d.New?.Package === "N/A" ? d.New?.Repo : d.New?.Package) ?? "(unmapped)")
+        .filter((d) => d !== packageName)
+        .filter(
+          (value, index, self) =>
+            self.indexOf(value) === index ||
+            !output[packageName].find((already) => value === already)
+        )
+        .forEach((d) => output[packageName].push(d));
+    });
+
+    return output;
+  }
+
   public inverseDependencies(dependencyList: Record<string, string[]>) {
     const dependents: Record<string, string[]> = {};
     Object.entries(dependencyList).forEach((p) => {
@@ -163,6 +183,15 @@ export class PackageMapping {
     const dep2: Record<string, string[]> = isICruiseResult(dependenciesJson)
       ? Object.fromEntries(
           dependenciesJson.modules
+            .filter(
+              (s) =>
+                s &&
+                !(
+                  s.source.startsWith("node_modules") ||
+                  s.source.startsWith("@") ||
+                  s.source.endsWith(".css")
+                )
+            )
             .map((m) => [
               m.source,
               m.dependencies

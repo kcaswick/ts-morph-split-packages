@@ -170,6 +170,17 @@ describe("tsMorphSplitPackages basic tests", () => {
     `);
   });
 
+  it("test export package dependencies", () => {
+    const m = loadSimpleMadge();
+    const result = m.exportPackageDependenciesChart();
+    expect(result).toMatchInlineSnapshot(`
+      Object {
+        "new": Array [],
+        "ts-morph-split-packages": Array [],
+      }
+    `);
+  });
+
   it.todo("test bad config filename");
   it.todo("test bad dependency filename");
 });
