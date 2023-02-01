@@ -39,3 +39,4 @@ obj
 .bash_history
 
 # Auto/tool added get put below here
+lib/__tests__/dependency-cruiser/dc-dc.json

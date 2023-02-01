@@ -1,0 +1,9 @@
+{
+  "OldPatterns": {
+    "src/cli": {
+      "Path": "packages/cli",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-cli"
+    }
+  }
+}
