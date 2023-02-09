@@ -135,7 +135,7 @@ export class PackageMapping {
         .filter((d) => d !== packageName)
         .filter(
           (value, index, self) =>
-            self.indexOf(value) === index ||
+            self.indexOf(value) === index &&
             !output[packageName].find((already) => value === already)
         )
         .forEach((d) => output[packageName].push(d));
