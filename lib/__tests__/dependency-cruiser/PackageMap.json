@@ -1,9 +1,59 @@
 {
   "OldPatterns": {
+    "src/cache": {
+      "Path": "packages/cache",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-cache"
+    },
     "src/cli": {
       "Path": "packages/cli",
       "Repo": "dependency-cruiser",
       "Package": "dependency-cruiser-cli"
+    },
+    "src/config-utl": {
+      "Path": "packages/config-utl",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-config-utl"
+    },
+    "src/enrich": {
+      "Path": "packages/enrich",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-enrich"
+    },
+    "src/extract": {
+      "Path": "packages/extract",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-extract"
+    },
+    "src/graph-utl": {
+      "Path": "packages/graph-utl",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-graph-utl"
+    },
+    "src/main": {
+      "Path": "packages/main",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-main"
+    },
+    "src/report": {
+      "Path": "packages/report",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-report"
+    },
+    "src/schema": {
+      "Path": "packages/schema",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-schema"
+    },
+    "src/utl": {
+      "Path": "packages/utl",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-utl"
+    },
+    "src/validate": {
+      "Path": "packages/validate",
+      "Repo": "dependency-cruiser",
+      "Package": "dependency-cruiser-validate"
     }
   }
 }
