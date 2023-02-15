@@ -3,14 +3,13 @@
 * Tests for {{fileName}}
 *
 */
-import React from 'react';
-import { render } from '@testing-library/react';
-// import 'jest-dom/extend-expect'; // add some helpful assertions
-import {{fileName}} from '../components/{{fileName}}';
-describe('<{{fileName}} />', () => {
+import { loadSimpleMadge } from "./test_fixtures";
+import {{camelCase fileName}} from '../{{fileName}}';
+describe('{{fileName}}', () => {
   it('Expect to not log errors in console', () => {
     const spy = jest.spyOn(global.console, 'error');
-    render(<{{fileName}} />);
+    const m = loadSimpleMadge();
+    {{camelCase fileName}}(m);
     expect(spy).not.toHaveBeenCalled();
   });
   it('Expect to have additional unit tests specified', () => {
@@ -21,9 +20,8 @@ describe('<{{fileName}} />', () => {
   * @see {@link https://jestjs.io/docs/en/api#testskipname-fn}
   */
   it.skip('Should render and match the snapshot', () => {
-    const {
-      container: { firstChild },
-    } = render(<{{fileName}} />);
-    expect(firstChild).toMatchSnapshot();
+    const m = loadSimpleMadge();
+    const result = {{camelCase fileName}}(m);
+    expect(result).toMatchSnapshot();
   });
 });
