@@ -3,39 +3,26 @@
 exports[`executeGitMoveForRepo Execute default plan 1`] = `
 Array [
   Object {
-    "reason": [Error: fatal: bad source, source=dist/bundle.d.ts, destination=src/bundle.d.ts
-],
-    "status": "rejected",
+    "status": "fulfilled",
+    "value": Object {
+      "moves": Array [
+        Object {
+          "from": "lib/__tests__/test_fixtures.ts",
+          "to": "src/__tests__/test_fixtures.ts",
+        },
+      ],
+    },
   },
   Object {
-    "reason": [Error: fatal: bad source, source=dist/cjs/index.cjs, destination=src/cjs/index.cjs
-],
-    "status": "rejected",
-  },
-  Object {
-    "reason": [Error: fatal: bad source, source=dist/esm/index.mjs, destination=src/esm/index.mjs
-],
-    "status": "rejected",
-  },
-  Object {
-    "reason": [Error: fatal: bad source, source=dist/index.d.ts, destination=src/index.d.ts
-],
-    "status": "rejected",
-  },
-  Object {
-    "reason": [Error: fatal: bad source, source=dist/index.js, destination=src/index.js
-],
-    "status": "rejected",
-  },
-  Object {
-    "reason": [Error: fatal: bad source, source=dist/mapping.d.ts, destination=src/mapping.d.ts
-],
-    "status": "rejected",
-  },
-  Object {
-    "reason": [Error: fatal: bad source, source=dist/mapping.js, destination=src/mapping.js
-],
-    "status": "rejected",
+    "status": "fulfilled",
+    "value": Object {
+      "moves": Array [
+        Object {
+          "from": "lib/mapping.ts",
+          "to": "src/mapping.ts",
+        },
+      ],
+    },
   },
 ]
 `;
@@ -44,102 +31,12 @@ exports[`prepareGitMove Should run and match the snapshot 1`] = `
 Map {
   "new" => Array [
     Array [
-      "dist/bundle.d.ts",
-      "src/bundle.d.ts",
+      "lib/__tests__/test_fixtures.ts",
+      "src/__tests__/test_fixtures.ts",
     ],
     Array [
-      "dist/cjs/index.cjs",
-      "src/cjs/index.cjs",
-    ],
-    Array [
-      "dist/esm/index.mjs",
-      "src/esm/index.mjs",
-    ],
-    Array [
-      "dist/index.d.ts",
-      "src/index.d.ts",
-    ],
-    Array [
-      "dist/index.js",
-      "src/index.js",
-    ],
-    Array [
-      "dist/mapping.d.ts",
-      "src/mapping.d.ts",
-    ],
-    Array [
-      "dist/mapping.js",
-      "src/mapping.js",
-    ],
-  ],
-}
-`;
-
-exports[`simple git Should render and match the snapshot 1`] = `
-Map {
-  "new" => Array [
-    Array [
-      "dist/bundle.d.ts",
-      "src/bundle.d.ts",
-    ],
-    Array [
-      "dist/cjs/index.cjs",
-      "src/cjs/index.cjs",
-    ],
-    Array [
-      "dist/esm/index.mjs",
-      "src/esm/index.mjs",
-    ],
-    Array [
-      "dist/index.d.ts",
-      "src/index.d.ts",
-    ],
-    Array [
-      "dist/index.js",
-      "src/index.js",
-    ],
-    Array [
-      "dist/mapping.d.ts",
-      "src/mapping.d.ts",
-    ],
-    Array [
-      "dist/mapping.js",
-      "src/mapping.js",
-    ],
-  ],
-}
-`;
-
-exports[`simple git Should run and match the snapshot 1`] = `
-Map {
-  "new" => Array [
-    Array [
-      "dist/bundle.d.ts",
-      "src/bundle.d.ts",
-    ],
-    Array [
-      "dist/cjs/index.cjs",
-      "src/cjs/index.cjs",
-    ],
-    Array [
-      "dist/esm/index.mjs",
-      "src/esm/index.mjs",
-    ],
-    Array [
-      "dist/index.d.ts",
-      "src/index.d.ts",
-    ],
-    Array [
-      "dist/index.js",
-      "src/index.js",
-    ],
-    Array [
-      "dist/mapping.d.ts",
-      "src/mapping.d.ts",
-    ],
-    Array [
-      "dist/mapping.js",
-      "src/mapping.js",
+      "lib/mapping.ts",
+      "src/mapping.ts",
     ],
   ],
 }

@@ -1,4 +1,3 @@
-import path from "path";
 import shell from "shelljs";
 import simpleGit, { SimpleGit } from "simple-git";
 import { mkdir, track } from "temp";
@@ -18,7 +17,7 @@ export async function checkoutTemporaryRepo(sourceRepo: SimpleGit, commitish: st
     shell.exec(`takeown /r /f "${destDir}"`);
   }
 
-  const sourceDir = path.resolve(await sourceRepo.revparse("--git-dir"));
+  const sourceDir = await sourceRepo.revparse("--absolute-git-dir");
   const destRepo = simpleGit(destDir);
 
   // Clone only the most recent 2 commits

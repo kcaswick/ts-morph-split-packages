@@ -1,4 +1,5 @@
-import { basename } from "path";
+import { ensureDir } from "fs-extra";
+import { basename, dirname, join } from "path";
 import { SimpleGit } from "simple-git";
 
 import { PackageMapping } from "./mapping";
@@ -30,6 +31,16 @@ export const prepareGitMove = (
   return movesByRepo;
 };
 
+const ensureFoldersExist = async (targetPaths: string[]) => {
+  console.debug(`Target paths: ${targetPaths.join(",")}`);
+  const targetFolders = targetPaths
+    .map((p) => dirname(p))
+    .filter((value, index, self) => self.indexOf(value) === index)
+    .sort((a, b) => (b.length === a.length ? a.localeCompare(b) : b.length - a.length));
+  console.debug(`Target folders: ${targetFolders.join(",")}`);
+  return Promise.all(targetFolders.map(ensureDir));
+};
+
 export const executeGitMoveForRepo = async (
   currentRepo: SimpleGit,
   targetRepo: string,
@@ -45,6 +56,8 @@ export const executeGitMoveForRepo = async (
   );
   await currentRepo.commit(`Remove all files that are not part of ${targetRepo}`);
 
+  const currentRepoPath = await currentRepo.revparse("--absolute-git-dir");
+  await ensureFoldersExist(moves.map((x) => join(currentRepoPath, "..", x[1])));
   const results = await Promise.allSettled(moves.map((x) => currentRepo.mv(...x)));
   if (results.every((p) => p.status === "fulfilled")) {
     await currentRepo.commit(`Move all files for ${targetRepo} to their new locations`);
