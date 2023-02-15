@@ -3,7 +3,7 @@
  * Tests for lib\git.ts
  *
  */
-import { loadSimpleMadge } from "./test_fixtures";
+import { checkoutTempSimpleRepo, loadSimpleMadge } from "./test_fixtures";
 import * as sut from "../git";
 describe("prepareGitMove", () => {
   it("Expect to not log errors in console", () => {
@@ -24,5 +24,19 @@ describe("prepareGitMove", () => {
     expect(newRepo).toBeDefined();
     expect(newRepo).toContainEqual(["dist/bundle.d.ts", "src/bundle.d.ts"]);
     expect(newRepo).not.toContainEqual(["lib/index.ts", expect.any(String)]);
+  });
+});
+describe("executeGitMoveForRepo", () => {
+  const tempRepo = checkoutTempSimpleRepo();
+
+  const spy = jest.spyOn(global.console, "error");
+  const m = loadSimpleMadge();
+  const plan = sut.prepareGitMove(m).get("new");
+  expect(plan).toBeDefined();
+  expect(spy).not.toHaveBeenCalled();
+
+  it("Execute default plan", async () => {
+    const results = await sut.executeGitMoveForRepo(await tempRepo, "new", plan!, m);
+    expect(results).toMatchSnapshot();
   });
 });

@@ -36,7 +36,7 @@ export const executeGitMoveForRepo = async (
   moves: Parameters<SimpleGit["mv"]>[],
   mapping: PackageMapping
 ) => {
-  await currentRepo.checkoutLocalBranch(mapping.config.BranchPrefix);
+  await currentRepo.checkoutLocalBranch(mapping.config.BranchPrefix + targetRepo);
   await currentRepo.rm(
     mapping.depMap
       .filter((x) => x.Name.New && x.Name.New.Repo !== targetRepo)

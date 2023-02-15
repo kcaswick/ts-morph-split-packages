@@ -1,5 +1,45 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`executeGitMoveForRepo Execute default plan 1`] = `
+Array [
+  Object {
+    "reason": [Error: fatal: bad source, source=dist/bundle.d.ts, destination=src/bundle.d.ts
+],
+    "status": "rejected",
+  },
+  Object {
+    "reason": [Error: fatal: bad source, source=dist/cjs/index.cjs, destination=src/cjs/index.cjs
+],
+    "status": "rejected",
+  },
+  Object {
+    "reason": [Error: fatal: bad source, source=dist/esm/index.mjs, destination=src/esm/index.mjs
+],
+    "status": "rejected",
+  },
+  Object {
+    "reason": [Error: fatal: bad source, source=dist/index.d.ts, destination=src/index.d.ts
+],
+    "status": "rejected",
+  },
+  Object {
+    "reason": [Error: fatal: bad source, source=dist/index.js, destination=src/index.js
+],
+    "status": "rejected",
+  },
+  Object {
+    "reason": [Error: fatal: bad source, source=dist/mapping.d.ts, destination=src/mapping.d.ts
+],
+    "status": "rejected",
+  },
+  Object {
+    "reason": [Error: fatal: bad source, source=dist/mapping.js, destination=src/mapping.js
+],
+    "status": "rejected",
+  },
+]
+`;
+
 exports[`prepareGitMove Should run and match the snapshot 1`] = `
 Map {
   "new" => Array [
