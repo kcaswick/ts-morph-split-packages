@@ -5,6 +5,8 @@
  */
 import { checkoutTempSimpleRepo, loadSimpleMadge } from "./test_fixtures";
 import * as sut from "../git";
+import { existsSync } from "fs";
+import { join } from "path";
 describe("prepareGitMove", () => {
   it("Expect to not log errors in console", () => {
     const spy = jest.spyOn(global.console, "error");
@@ -27,7 +29,7 @@ describe("prepareGitMove", () => {
   });
 });
 describe("executeGitMoveForRepo", () => {
-  const tempRepo = checkoutTempSimpleRepo();
+  const repoPromise = checkoutTempSimpleRepo();
 
   const spy = jest.spyOn(global.console, "error");
   const m = loadSimpleMadge();
@@ -36,7 +38,10 @@ describe("executeGitMoveForRepo", () => {
   expect(spy).not.toHaveBeenCalled();
 
   it("Execute default plan", async () => {
-    const results = await sut.executeGitMoveForRepo(await tempRepo, "new", plan!, m);
+    const [tempRepoPath, tempRepo] = await repoPromise;
+    const results = await sut.executeGitMoveForRepo(tempRepo, "new", plan!, m);
     expect(results).toMatchSnapshot();
-  });
+    expect(existsSync(join(tempRepoPath, "lib/index.ts"))).toBeFalsy();
+    expect(existsSync(join(tempRepoPath, "src/bundle.d.ts"))).toBeTruthy();
+  }, 15000);
 });

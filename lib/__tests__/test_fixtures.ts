@@ -1,3 +1,4 @@
+import path from "path";
 import shell from "shelljs";
 import simpleGit, { SimpleGit } from "simple-git";
 import { mkdir, track } from "temp";
@@ -17,10 +18,20 @@ export async function checkoutTemporaryRepo(sourceRepo: SimpleGit, commitish: st
     shell.exec(`takeown /r /f "${destDir}"`);
   }
 
-  const result = await sourceRepo.raw("worktree", "add", "--detach", destDir, commitish);
-  console.debug(`git add worktree result: ${result}`);
-  const destRepo = simpleGit(destDir, { config: [`safe.directory=${destDir}`] });
-  return destRepo;
+  const sourceDir = path.resolve(await sourceRepo.revparse("--git-dir"));
+  const destRepo = simpleGit(destDir);
+
+  // Clone only the most recent 2 commits
+  await destRepo.init();
+  await destRepo.addRemote("origin", sourceDir);
+  const result = await destRepo.fetch("origin", commitish, {
+    "--depth": 2,
+    "--no-tags": null,
+    "--no-recurse-submodules": null,
+  });
+  console.debug(`git fetch result: ${result.raw}`);
+  await destRepo.checkout("FETCH_HEAD");
+  return [destDir, destRepo] as [path: string, repo: SimpleGit];
 }
 
 export function checkoutTempSimpleRepo() {

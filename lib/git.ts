@@ -36,6 +36,7 @@ export const executeGitMoveForRepo = async (
   moves: Parameters<SimpleGit["mv"]>[],
   mapping: PackageMapping
 ) => {
+  await throwIfRepoNotReady(currentRepo);
   await currentRepo.checkoutLocalBranch(mapping.config.BranchPrefix + targetRepo);
   await currentRepo.rm(
     mapping.depMap
@@ -51,4 +52,11 @@ export const executeGitMoveForRepo = async (
   // TODO: Handle failures here or return mix? Probably should throw if any failed.
 
   return results;
+};
+
+const throwIfRepoNotReady = async (currentRepo: SimpleGit) => {
+  if (!(await currentRepo.checkIsRepo())) {
+    throw new Error(`Current directory must be a git working tree`);
+  }
+  // TODO: Check that no branches are named split/, no uncommitted changes, etc.
 };
