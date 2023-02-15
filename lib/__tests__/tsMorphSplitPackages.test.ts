@@ -147,13 +147,25 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"dependencies\\": []
         },
         {
+          \\"OldName\\": \\"lib/git.ts\\",
+          \\"NewRepo\\": \\"ts-morph-split-packages\\",
+          \\"NewPackage\\": \\"N/A\\",
+          \\"NewName\\": \\"lib/git.ts\\",
+          \\"Dependency Count\\": 1,
+          \\"Package Dependencies\\": [],
+          \\"dependencies\\": [
+            \\"ts-morph-split-packages:lib/mapping.ts\\"
+          ]
+        },
+        {
           \\"OldName\\": \\"lib/index.ts\\",
           \\"NewRepo\\": \\"ts-morph-split-packages\\",
           \\"NewPackage\\": \\"N/A\\",
           \\"NewName\\": \\"lib/index.ts\\",
-          \\"Dependency Count\\": 1,
+          \\"Dependency Count\\": 2,
           \\"Package Dependencies\\": [],
           \\"dependencies\\": [
+            \\"ts-morph-split-packages:lib/git.ts\\",
             \\"ts-morph-split-packages:lib/mapping.ts\\"
           ]
         },

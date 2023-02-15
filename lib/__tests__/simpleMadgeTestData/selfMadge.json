@@ -10,7 +10,11 @@
   ],
   "dist/mapping.d.ts": [],
   "dist/mapping.js": [],
+  "lib/git.ts": [
+    "lib/mapping.ts"
+  ],
   "lib/index.ts": [
+    "lib/git.ts",
     "lib/mapping.ts"
   ],
   "lib/mapping.ts": []

@@ -2174,6 +2174,7 @@ exports[`complex repository tests test Export 1`] = `
 exports[`complex repository tests test loading generated data 1`] = `
 PackageMapping {
   "config": Config {
+    "BranchPrefix": "split/",
     "OldPatterns": Map {
       "src/cache" => Object {
         "Package": "dependency-cruiser-cache",

@@ -30,7 +30,8 @@
   },
   "dependencies": {
     "dependency-cruiser": "^12.6.0",
-    "fs-extra": "^11.1.0"
+    "fs-extra": "^11.1.0",
+    "simple-git": "^3.16.0"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.0.1",

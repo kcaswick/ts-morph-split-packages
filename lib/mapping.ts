@@ -61,6 +61,7 @@ class MapResult implements IMapResult {
 
 export class Config {
   OldPatterns = new Map<string, Location>();
+  BranchPrefix = "split/";
 }
 
 // TODO: Switch to using this class for mappings
