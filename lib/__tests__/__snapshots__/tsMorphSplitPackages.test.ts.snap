@@ -5,12 +5,18 @@ PackageMapping {
   "config": Config {
     "BranchPrefix": "split/",
     "OldPatterns": Map {
-      "dist" => Object {
+      "lib/mapping" => Object {
         "Package": "new",
-        "Path": "src",
+        "Path": "src/mapping",
+        "Repo": "new",
+      },
+      "lib/__tests__/test_" => Object {
+        "Package": "new",
+        "Path": "src/__tests__/test_",
         "Repo": "new",
       },
       "lib" => Object {
+        "Order": 10,
         "Package": "N/A",
         "Path": "lib",
         "Repo": "ts-morph-split-packages",
@@ -21,58 +27,41 @@ PackageMapping {
     Object {
       "Name": MapResult {
         "New": Location {
-          "Order": 0,
-          "Package": "new",
-          "Path": "src/bundle.d.ts",
-          "Repo": "new",
+          "Order": 10,
+          "Package": "N/A",
+          "Path": "lib/__tests__/complexRepo.test.ts",
+          "Repo": "ts-morph-split-packages",
           "toString": [Function],
         },
-        "OldName": "dist/bundle.d.ts",
+        "OldName": "lib/__tests__/complexRepo.test.ts",
         "isUnmapped": [Function],
         "toString": [Function],
       },
-      "dependencyMap": Array [],
+      "dependencyMap": Array [
+        MapResult {
+          "New": Location {
+            "Order": 10,
+            "Package": "N/A",
+            "Path": "lib/index.ts",
+            "Repo": "ts-morph-split-packages",
+            "toString": [Function],
+          },
+          "OldName": "lib/index.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
+        },
+      ],
     },
     Object {
       "Name": MapResult {
         "New": Location {
-          "Order": 0,
-          "Package": "new",
-          "Path": "src/cjs/index.cjs",
-          "Repo": "new",
+          "Order": 10,
+          "Package": "N/A",
+          "Path": "lib/__tests__/git.test.ts",
+          "Repo": "ts-morph-split-packages",
           "toString": [Function],
         },
-        "OldName": "dist/cjs/index.cjs",
-        "isUnmapped": [Function],
-        "toString": [Function],
-      },
-      "dependencyMap": Array [],
-    },
-    Object {
-      "Name": MapResult {
-        "New": Location {
-          "Order": 0,
-          "Package": "new",
-          "Path": "src/esm/index.mjs",
-          "Repo": "new",
-          "toString": [Function],
-        },
-        "OldName": "dist/esm/index.mjs",
-        "isUnmapped": [Function],
-        "toString": [Function],
-      },
-      "dependencyMap": Array [],
-    },
-    Object {
-      "Name": MapResult {
-        "New": Location {
-          "Order": 0,
-          "Package": "new",
-          "Path": "src/index.d.ts",
-          "Repo": "new",
-          "toString": [Function],
-        },
-        "OldName": "dist/index.d.ts",
+        "OldName": "lib/__tests__/git.test.ts",
         "isUnmapped": [Function],
         "toString": [Function],
       },
@@ -81,11 +70,23 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "new",
-            "Path": "src/mapping.d.ts",
+            "Path": "src/__tests__/test_fixtures.ts",
             "Repo": "new",
             "toString": [Function],
           },
-          "OldName": "dist/mapping.d.ts",
+          "OldName": "lib/__tests__/test_fixtures.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
+        },
+        MapResult {
+          "New": Location {
+            "Order": 10,
+            "Package": "N/A",
+            "Path": "lib/git.ts",
+            "Repo": "ts-morph-split-packages",
+            "toString": [Function],
+          },
+          "OldName": "lib/git.ts",
           "isUnmapped": [Function],
           "toString": [Function],
         },
@@ -96,11 +97,26 @@ PackageMapping {
         "New": Location {
           "Order": 0,
           "Package": "new",
-          "Path": "src/index.js",
+          "Path": "src/__tests__/test_fixtures.ts",
           "Repo": "new",
           "toString": [Function],
         },
-        "OldName": "dist/index.js",
+        "OldName": "lib/__tests__/test_fixtures.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
+      },
+      "dependencyMap": Array [],
+    },
+    Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 10,
+          "Package": "N/A",
+          "Path": "lib/__tests__/tsMorphSplitPackages.test.ts",
+          "Repo": "ts-morph-split-packages",
+          "toString": [Function],
+        },
+        "OldName": "lib/__tests__/tsMorphSplitPackages.test.ts",
         "isUnmapped": [Function],
         "toString": [Function],
       },
@@ -109,11 +125,11 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "new",
-            "Path": "src/mapping.js",
+            "Path": "src/__tests__/test_fixtures.ts",
             "Repo": "new",
             "toString": [Function],
           },
-          "OldName": "dist/mapping.js",
+          "OldName": "lib/__tests__/test_fixtures.ts",
           "isUnmapped": [Function],
           "toString": [Function],
         },
@@ -122,37 +138,7 @@ PackageMapping {
     Object {
       "Name": MapResult {
         "New": Location {
-          "Order": 0,
-          "Package": "new",
-          "Path": "src/mapping.d.ts",
-          "Repo": "new",
-          "toString": [Function],
-        },
-        "OldName": "dist/mapping.d.ts",
-        "isUnmapped": [Function],
-        "toString": [Function],
-      },
-      "dependencyMap": Array [],
-    },
-    Object {
-      "Name": MapResult {
-        "New": Location {
-          "Order": 0,
-          "Package": "new",
-          "Path": "src/mapping.js",
-          "Repo": "new",
-          "toString": [Function],
-        },
-        "OldName": "dist/mapping.js",
-        "isUnmapped": [Function],
-        "toString": [Function],
-      },
-      "dependencyMap": Array [],
-    },
-    Object {
-      "Name": MapResult {
-        "New": Location {
-          "Order": 0,
+          "Order": 10,
           "Package": "N/A",
           "Path": "lib/git.ts",
           "Repo": "ts-morph-split-packages",
@@ -166,9 +152,9 @@ PackageMapping {
         MapResult {
           "New": Location {
             "Order": 0,
-            "Package": "N/A",
-            "Path": "lib/mapping.ts",
-            "Repo": "ts-morph-split-packages",
+            "Package": "new",
+            "Path": "src/mapping.ts",
+            "Repo": "new",
             "toString": [Function],
           },
           "OldName": "lib/mapping.ts",
@@ -180,7 +166,7 @@ PackageMapping {
     Object {
       "Name": MapResult {
         "New": Location {
-          "Order": 0,
+          "Order": 10,
           "Package": "N/A",
           "Path": "lib/index.ts",
           "Repo": "ts-morph-split-packages",
@@ -193,7 +179,7 @@ PackageMapping {
       "dependencyMap": Array [
         MapResult {
           "New": Location {
-            "Order": 0,
+            "Order": 10,
             "Package": "N/A",
             "Path": "lib/git.ts",
             "Repo": "ts-morph-split-packages",
@@ -206,9 +192,9 @@ PackageMapping {
         MapResult {
           "New": Location {
             "Order": 0,
-            "Package": "N/A",
-            "Path": "lib/mapping.ts",
-            "Repo": "ts-morph-split-packages",
+            "Package": "new",
+            "Path": "src/mapping.ts",
+            "Repo": "new",
             "toString": [Function],
           },
           "OldName": "lib/mapping.ts",
@@ -221,9 +207,9 @@ PackageMapping {
       "Name": MapResult {
         "New": Location {
           "Order": 0,
-          "Package": "N/A",
-          "Path": "lib/mapping.ts",
-          "Repo": "ts-morph-split-packages",
+          "Package": "new",
+          "Path": "src/mapping.ts",
+          "Repo": "new",
           "toString": [Function],
         },
         "OldName": "lib/mapping.ts",
@@ -237,88 +223,100 @@ PackageMapping {
     Object {
       "Name": MapResult {
         "New": Location {
-          "Order": 0,
-          "Package": "new",
-          "Path": "src/mapping.d.ts",
-          "Repo": "new",
-          "toString": [Function],
-        },
-        "OldName": "dist/mapping.d.ts",
-        "isUnmapped": [Function],
-        "toString": [Function],
-      },
-      "dependentMap": Array [
-        MapResult {
-          "New": Location {
-            "Order": 0,
-            "Package": "new",
-            "Path": "src/index.d.ts",
-            "Repo": "new",
-            "toString": [Function],
-          },
-          "OldName": "dist/index.d.ts",
-          "isUnmapped": [Function],
-          "toString": [Function],
-        },
-      ],
-    },
-    Object {
-      "Name": MapResult {
-        "New": Location {
-          "Order": 0,
-          "Package": "new",
-          "Path": "src/mapping.js",
-          "Repo": "new",
-          "toString": [Function],
-        },
-        "OldName": "dist/mapping.js",
-        "isUnmapped": [Function],
-        "toString": [Function],
-      },
-      "dependentMap": Array [
-        MapResult {
-          "New": Location {
-            "Order": 0,
-            "Package": "new",
-            "Path": "src/index.js",
-            "Repo": "new",
-            "toString": [Function],
-          },
-          "OldName": "dist/index.js",
-          "isUnmapped": [Function],
-          "toString": [Function],
-        },
-      ],
-    },
-    Object {
-      "Name": MapResult {
-        "New": Location {
-          "Order": 0,
+          "Order": 10,
           "Package": "N/A",
-          "Path": "lib/mapping.ts",
+          "Path": "lib/index.ts",
           "Repo": "ts-morph-split-packages",
           "toString": [Function],
         },
-        "OldName": "lib/mapping.ts",
+        "OldName": "lib/index.ts",
         "isUnmapped": [Function],
         "toString": [Function],
       },
       "dependentMap": Array [
         MapResult {
           "New": Location {
-            "Order": 0,
+            "Order": 10,
             "Package": "N/A",
-            "Path": "lib/git.ts",
+            "Path": "lib/__tests__/complexRepo.test.ts",
             "Repo": "ts-morph-split-packages",
             "toString": [Function],
           },
-          "OldName": "lib/git.ts",
+          "OldName": "lib/__tests__/complexRepo.test.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
+        },
+      ],
+    },
+    Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 0,
+          "Package": "new",
+          "Path": "src/__tests__/test_fixtures.ts",
+          "Repo": "new",
+          "toString": [Function],
+        },
+        "OldName": "lib/__tests__/test_fixtures.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
+      },
+      "dependentMap": Array [
+        MapResult {
+          "New": Location {
+            "Order": 10,
+            "Package": "N/A",
+            "Path": "lib/__tests__/git.test.ts",
+            "Repo": "ts-morph-split-packages",
+            "toString": [Function],
+          },
+          "OldName": "lib/__tests__/git.test.ts",
           "isUnmapped": [Function],
           "toString": [Function],
         },
         MapResult {
           "New": Location {
-            "Order": 0,
+            "Order": 10,
+            "Package": "N/A",
+            "Path": "lib/__tests__/tsMorphSplitPackages.test.ts",
+            "Repo": "ts-morph-split-packages",
+            "toString": [Function],
+          },
+          "OldName": "lib/__tests__/tsMorphSplitPackages.test.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
+        },
+      ],
+    },
+    Object {
+      "Name": MapResult {
+        "New": Location {
+          "Order": 10,
+          "Package": "N/A",
+          "Path": "lib/git.ts",
+          "Repo": "ts-morph-split-packages",
+          "toString": [Function],
+        },
+        "OldName": "lib/git.ts",
+        "isUnmapped": [Function],
+        "toString": [Function],
+      },
+      "dependentMap": Array [
+        MapResult {
+          "New": Location {
+            "Order": 10,
+            "Package": "N/A",
+            "Path": "lib/__tests__/git.test.ts",
+            "Repo": "ts-morph-split-packages",
+            "toString": [Function],
+          },
+          "OldName": "lib/__tests__/git.test.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
+        },
+        MapResult {
+          "New": Location {
+            "Order": 10,
             "Package": "N/A",
             "Path": "lib/index.ts",
             "Repo": "ts-morph-split-packages",
@@ -334,19 +332,31 @@ PackageMapping {
       "Name": MapResult {
         "New": Location {
           "Order": 0,
-          "Package": "N/A",
-          "Path": "lib/git.ts",
-          "Repo": "ts-morph-split-packages",
+          "Package": "new",
+          "Path": "src/mapping.ts",
+          "Repo": "new",
           "toString": [Function],
         },
-        "OldName": "lib/git.ts",
+        "OldName": "lib/mapping.ts",
         "isUnmapped": [Function],
         "toString": [Function],
       },
       "dependentMap": Array [
         MapResult {
           "New": Location {
-            "Order": 0,
+            "Order": 10,
+            "Package": "N/A",
+            "Path": "lib/git.ts",
+            "Repo": "ts-morph-split-packages",
+            "toString": [Function],
+          },
+          "OldName": "lib/git.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
+        },
+        MapResult {
+          "New": Location {
+            "Order": 10,
             "Package": "N/A",
             "Path": "lib/index.ts",
             "Repo": "ts-morph-split-packages",

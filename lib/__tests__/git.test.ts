@@ -24,7 +24,7 @@ describe("prepareGitMove", () => {
     const result = sut.prepareGitMove(m);
     const newRepo = result.get("new");
     expect(newRepo).toBeDefined();
-    expect(newRepo).toContainEqual(["dist/bundle.d.ts", "src/bundle.d.ts"]);
+    expect(newRepo).toContainEqual(["lib/mapping.ts", "src/mapping.ts"]);
     expect(newRepo).not.toContainEqual(["lib/index.ts", expect.any(String)]);
   });
 });
@@ -42,6 +42,6 @@ describe("executeGitMoveForRepo", () => {
     const results = await sut.executeGitMoveForRepo(tempRepo, "new", plan!, m);
     expect(results).toMatchSnapshot();
     expect(existsSync(join(tempRepoPath, "lib/index.ts"))).toBeFalsy();
-    expect(existsSync(join(tempRepoPath, "src/bundle.d.ts"))).toBeTruthy();
+    expect(existsSync(join(tempRepoPath, "src/mapping.ts"))).toBeTruthy();
   }, 15000);
 });

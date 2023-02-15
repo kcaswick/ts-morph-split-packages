@@ -1,15 +1,15 @@
 {
-  "dist/bundle.d.ts": [],
-  "dist/cjs/index.cjs": [],
-  "dist/esm/index.mjs": [],
-  "dist/index.d.ts": [
-    "dist/mapping.d.ts"
+  "lib/__tests__/complexRepo.test.ts": [
+    "lib/index.ts"
   ],
-  "dist/index.js": [
-    "dist/mapping.js"
+  "lib/__tests__/git.test.ts": [
+    "lib/__tests__/test_fixtures.ts",
+    "lib/git.ts"
   ],
-  "dist/mapping.d.ts": [],
-  "dist/mapping.js": [],
+  "lib/__tests__/test_fixtures.ts": [],
+  "lib/__tests__/tsMorphSplitPackages.test.ts": [
+    "lib/__tests__/test_fixtures.ts"
+  ],
   "lib/git.ts": [
     "lib/mapping.ts"
   ],
