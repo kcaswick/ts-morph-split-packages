@@ -2,11 +2,9 @@
 import { createWriteStream } from "fs";
 import madge from "madge";
 import { promisify } from "util";
-import { PackageMapping } from "../index";
+import { loadSimpleMadge, simpleMadgeDependenciesPath } from "./test_fixtures";
 
 describe("tsMorphSplitPackages basic tests", () => {
-  const simpleMadgeConfigPath = "lib/__tests__/simpleMadgeTestData/PackageMap.json";
-  const simpleMadgeDependenciesPath = "lib/__tests__/simpleMadgeTestData/selfMadge.json";
 
   it("generate simpleMadgeTestData", async () => {
     const m = await madge(
@@ -50,12 +48,6 @@ describe("tsMorphSplitPackages basic tests", () => {
       s.close();
     }
   });
-
-  function loadSimpleMadge() {
-    const m = new PackageMapping();
-    m.getPackageMap(simpleMadgeDependenciesPath, simpleMadgeConfigPath);
-    return m;
-  }
 
   it("test loading simpleMadgeTestData", () => {
     const m = loadSimpleMadge();
