@@ -1,6 +1,6 @@
 import { ensureDir } from "fs-extra";
 import { basename, dirname, join } from "path";
-import { SimpleGit } from "simple-git";
+import { BranchSummary, SimpleGit } from "simple-git";
 
 import { PackageMapping } from "./mapping";
 
@@ -71,5 +71,33 @@ const throwIfRepoNotReady = async (currentRepo: SimpleGit) => {
   if (!(await currentRepo.checkIsRepo())) {
     throw new Error(`Current directory must be a git working tree`);
   }
-  // TODO: Check that no branches are named split/, no uncommitted changes, etc.
+
+  // Check that no branches are named split/
+  console.log("Checking for split branches");
+  let branches: BranchSummary;
+  try {
+    branches = await currentRepo.branch(["--list", "split/*"]);
+    console.debug(branches);
+  } catch (e) {
+    console.error(e);
+    throw e;
+  }
+
+  if (branches.all.length > 0) {
+    throw new Error(
+      `Current directory must not have any branches starting with split/, but found branches ${branches.all.join(
+        ","
+      )}`
+    );
+  }
+
+  // Check that no uncommitted changes, etc.
+  const status = await currentRepo.status();
+  if (!status.isClean()) {
+    throw new Error(
+      `Current directory must not have any uncommitted changes, but found ${status.files.map(
+        (f) => f.path
+      )}`
+    );
+  }
 };

@@ -4,7 +4,8 @@
   ],
   "lib/__tests__/git.test.ts": [
     "lib/__tests__/test_fixtures.ts",
-    "lib/git.ts"
+    "lib/git.ts",
+    "lib/mapping.ts"
   ],
   "lib/__tests__/test_fixtures.ts": [],
   "lib/__tests__/tsMorphSplitPackages.test.ts": [

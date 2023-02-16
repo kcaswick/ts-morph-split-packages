@@ -26,7 +26,6 @@ describe("tsMorphSplitPackages basic tests", () => {
     try {
       const dependenciesJson = JSON.stringify(dependencies, undefined, 2);
       await promisify(
-        // eslint-disable-next-line no-unused-vars
         s.write.bind(s) as (chunk: string, _?: (error: Error | null | undefined) => void) => boolean
       )(dependenciesJson);
     } catch (err) {
@@ -94,13 +93,14 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"NewRepo\\": \\"ts-morph-split-packages\\",
           \\"NewPackage\\": \\"N/A\\",
           \\"NewName\\": \\"lib/__tests__/git.test.ts\\",
-          \\"Dependency Count\\": 2,
+          \\"Dependency Count\\": 3,
           \\"Package Dependencies\\": [
             \\"new\\"
           ],
           \\"dependencies\\": [
             \\"new:src/__tests__/test_fixtures.ts\\",
-            \\"ts-morph-split-packages:lib/git.ts\\"
+            \\"ts-morph-split-packages:lib/git.ts\\",
+            \\"new:src/mapping.ts\\"
           ]
         },
         {

@@ -90,6 +90,18 @@ PackageMapping {
           "isUnmapped": [Function],
           "toString": [Function],
         },
+        MapResult {
+          "New": Location {
+            "Order": 0,
+            "Package": "new",
+            "Path": "src/mapping.ts",
+            "Repo": "new",
+            "toString": [Function],
+          },
+          "OldName": "lib/mapping.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
+        },
       ],
     },
     Object {
@@ -342,6 +354,18 @@ PackageMapping {
         "toString": [Function],
       },
       "dependentMap": Array [
+        MapResult {
+          "New": Location {
+            "Order": 10,
+            "Package": "N/A",
+            "Path": "lib/__tests__/git.test.ts",
+            "Repo": "ts-morph-split-packages",
+            "toString": [Function],
+          },
+          "OldName": "lib/__tests__/git.test.ts",
+          "isUnmapped": [Function],
+          "toString": [Function],
+        },
         MapResult {
           "New": Location {
             "Order": 10,

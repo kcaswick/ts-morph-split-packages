@@ -10,18 +10,10 @@ export const simpleMadgeConfigPath = "lib/__tests__/simpleMadgeTestData/PackageM
 export const simpleMadgeDependenciesPath = "lib/__tests__/simpleMadgeTestData/selfMadge.json";
 
 export async function checkoutTemporaryRepo(sourceRepo: SimpleGit, commitish: string) {
-  const destDir = await mkdir("test-worktree");
-  console.debug(`Temporary repo being created in ${destDir}`);
-  // On Windows, temporary folders may get created with different ownership, so fix it
-  if (shell.which("takeown")) {
-    shell.exec(`takeown /r /f "${destDir}"`);
-  }
-
-  const sourceDir = await sourceRepo.revparse("--absolute-git-dir");
-  const destRepo = simpleGit(destDir);
+  const [destDir, destRepo] = await createTemporaryRepository();
 
   // Clone only the most recent 2 commits
-  await destRepo.init();
+  const sourceDir = await sourceRepo.revparse("--absolute-git-dir");
   await destRepo.addRemote("origin", sourceDir);
   const result = await destRepo.fetch("origin", commitish, {
     "--depth": 2,
@@ -31,6 +23,27 @@ export async function checkoutTemporaryRepo(sourceRepo: SimpleGit, commitish: st
   console.debug(`git fetch result: ${result.raw}`);
   await destRepo.checkout("FETCH_HEAD");
   return [destDir, destRepo] as [path: string, repo: SimpleGit];
+}
+
+/**
+ * Creates a new temporary git repository in a new temporary directory.
+ *
+ * On Windows, this function also runs the `takeown` utility to ensure that the
+ * temporary directory is owned by the current user.
+ */
+export async function createTemporaryRepository(
+  affixes: Parameters<typeof mkdir>[0] = "test-worktree"
+) {
+  const temporaryDirectory = await mkdir(affixes);
+  console.debug(`Temporary repo being created in ${temporaryDirectory}`);
+  // On Windows, temporary folders may get created with different ownership, so fix it
+  if (shell.which("takeown")) {
+    shell.exec(`takeown /r /f "${temporaryDirectory}"`);
+  }
+
+  const temporaryRepository = simpleGit(temporaryDirectory);
+  await temporaryRepository.init();
+  return [temporaryDirectory, temporaryRepository] as [path: string, repo: SimpleGit];
 }
 
 export function checkoutTempSimpleRepo() {

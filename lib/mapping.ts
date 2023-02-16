@@ -42,7 +42,7 @@ export type IMapResult = {
   New?: Location;
 };
 
-class MapResult implements IMapResult {
+export class MapResult implements IMapResult {
   OldName: string;
   New?: Location;
 
