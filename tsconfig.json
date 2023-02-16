@@ -18,7 +18,7 @@
     "noUnusedLocals": false,
     "typeRoots": ["./node_modules/@types"],
     "types": ["@types/jest"],
-    "lib": ["es6", "dom", "DOM.Iterable", "es2015.collection", "es2018", "ES2019"]
+    "lib": ["es6", "dom", "DOM.Iterable", "es2015.collection", "es2018", "ES2019", "ES2021"]
   },
   "include": ["lib/**/*.ts", "lib/**/*.tsx"]
 }

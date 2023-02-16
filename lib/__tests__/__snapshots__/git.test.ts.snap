@@ -7,19 +7,24 @@ Array [
     "value": Object {
       "moves": Array [
         Object {
-          "from": "lib/__tests__/test_fixtures.ts",
-          "to": "src/__tests__/test_fixtures.ts",
+          "from": "lib/mapping.ts",
+          "to": "src/mapping.ts",
         },
       ],
     },
   },
+]
+`;
+
+exports[`executeGitMoveForRepo Execute default plan 2`] = `
+Array [
   Object {
     "status": "fulfilled",
     "value": Object {
       "moves": Array [
         Object {
-          "from": "lib/mapping.ts",
-          "to": "src/mapping.ts",
+          "from": "lib/__tests__/test_fixtures.ts",
+          "to": "src/__tests__/test_fixtures.ts",
         },
       ],
     },

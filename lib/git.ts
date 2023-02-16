@@ -1,8 +1,13 @@
 import { ensureDir } from "fs-extra";
 import { basename, dirname, join } from "path";
-import { BranchSummary, SimpleGit } from "simple-git";
+import { BranchSummary, GitError, SimpleGit } from "simple-git";
 
 import { PackageMapping } from "./mapping";
+
+interface PromiseRejectedResult<E extends GitError = GitError> {
+  status: "rejected";
+  reason: E;
+}
 
 export const prepareGitMove = (
   mapping: PackageMapping,
@@ -15,7 +20,8 @@ export const prepareGitMove = (
         !x.Name.isUnmapped() &&
         x.Name.New &&
         x.Name.New.Repo !== "N/A" &&
-        x.Name.New.Repo !== currentRepo
+        x.Name.New.Repo !== currentRepo &&
+        x.Name.OldName !== x.Name.New.Path
     )
     .forEach((x) => {
       if (x.Name.New) {
@@ -62,22 +68,29 @@ export const executeGitMoveForRepo = async (
   if (results.every((p) => p.status === "fulfilled")) {
     await currentRepo.commit(`Move all files for ${targetRepo} to their new locations`);
   }
-  // TODO: Handle failures here or return mix? Probably should throw if any failed.
+
+  // Throw if any failed.
+  const rejectedPromises = results.filter(
+    (p) => p.status === "rejected"
+  ) as PromiseRejectedResult[];
+  if (rejectedPromises.length > 0) {
+    console.debug(`Rejected promises: ${rejectedPromises}`);
+    throw new AggregateError(rejectedPromises.map((p) => p.reason));
+  }
 
   return results;
 };
 
-const throwIfRepoNotReady = async (currentRepo: SimpleGit) => {
-  if (!(await currentRepo.checkIsRepo())) {
-    throw new Error(`Current directory must be a git working tree`);
-  }
-
+export const executeGitMoveForRepos = async (
+  currentRepo: SimpleGit,
+  moves: Map<string, Parameters<SimpleGit["mv"]>[]>,
+  mapping: PackageMapping
+) => {
   // Check that no branches are named split/
   console.log("Checking for split branches");
   let branches: BranchSummary;
   try {
     branches = await currentRepo.branch(["--list", "split/*"]);
-    console.debug(branches);
   } catch (e) {
     console.error(e);
     throw e;
@@ -89,6 +102,19 @@ const throwIfRepoNotReady = async (currentRepo: SimpleGit) => {
         ","
       )}`
     );
+  }
+
+  return Array.from(moves.entries()).map(async ([repoPath, repoMoves]) => {
+    const startCommitish = await currentRepo.revparse(["HEAD"]);
+    const results = executeGitMoveForRepo(currentRepo, repoPath, repoMoves, mapping);
+    await currentRepo.checkout(startCommitish);
+    return results;
+  });
+};
+
+const throwIfRepoNotReady = async (currentRepo: SimpleGit) => {
+  if (!(await currentRepo.checkIsRepo())) {
+    throw new Error(`Current directory must be a git working tree`);
   }
 
   // Check that no uncommitted changes, etc.

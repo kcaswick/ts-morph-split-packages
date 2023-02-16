@@ -60,8 +60,8 @@ describe("executeGitMoveForRepo", () => {
 
   const spy = jest.spyOn(global.console, "error");
   const m = loadSimpleMadge();
-  const plan = sut.prepareGitMove(m).get("new");
-  expect(plan).toBeDefined();
+  const plan = sut.prepareGitMove(m);
+  expect(plan.get("new")).toBeDefined();
   expect(spy).not.toHaveBeenCalled();
 
   it("checkoutTempSimpleRepo", async () => {
@@ -72,13 +72,36 @@ describe("executeGitMoveForRepo", () => {
 
   it("Execute default plan", async () => {
     const [tempRepoPath, tempRepo] = await repoPromise;
-    const results = await sut.executeGitMoveForRepo(tempRepo, "new", plan!, m);
+    const startCommitish = await tempRepo.revparse(["HEAD"]);
+    const results = expect(
+      sut.executeGitMoveForRepo(tempRepo, "new", plan.get("new")!, m)
+    ).resolves;
     // Wait for all promises to complete
     await new Promise(setImmediate);
-    expect(results).toMatchSnapshot();
+    await results.toMatchSnapshot();
     expect(existsSync(join(tempRepoPath, "lib/index.ts"))).toBeFalsy();
     expect(existsSync(join(tempRepoPath, "src/mapping.ts"))).toBeTruthy();
+
+    await tempRepo.checkout(startCommitish);
+
+    const resultsTestFixtures = expect(
+      sut.executeGitMoveForRepo(tempRepo, "test_fixtures", plan.get("test_fixtures")!, m)
+    ).resolves;
+    // Wait for all promises to complete
+    await new Promise(setImmediate);
+    await resultsTestFixtures.toMatchSnapshot();
+    expect(existsSync(join(tempRepoPath, "src/__tests__/test_fixtures.ts"))).toBeTruthy();
   }, 15000);
+});
+describe("executeGitMoveForRepos", () => {
+  it("Should throw if branch split/any is present", async () => {
+    const [_tempRepoPath, tempRepo] = await createTemporaryRepository("empty_folder");
+    await expect(tempRepo.commit("Empty initial commit", ["--allow-empty"])).resolves.toBeDefined();
+    await expect(tempRepo.branch(["split/any"])).resolves.toBeDefined();
+    const m = new PackageMapping(); // X loadSimpleMadge();
+    await expect(sut.executeGitMoveForRepos(tempRepo, new Map(), m)).rejects.toThrow(/split/i);
+    /* .toThrowErrorMatchingInlineSnapshot() */
+  });
 });
 describe("throwIfRepoNotReady", () => {
   it("Should throw if dir is not a repo", async () => {
@@ -89,12 +112,4 @@ describe("throwIfRepoNotReady", () => {
       /fatal: (not a git repository (or any of the parent directories): |invalid gitfile format:.*)\.git/i
     );
   }, 15000);
-  it("Should throw if branch split/any is present", async () => {
-    const [_tempRepoPath, tempRepo] = await createTemporaryRepository("empty_folder");
-    await expect(tempRepo.commit("Empty initial commit", ["--allow-empty"])).resolves.toBeDefined();
-    await expect(tempRepo.branch(["split/any"])).resolves.toBeDefined();
-    const m = new PackageMapping(); // X loadSimpleMadge();
-    await expect(sut.executeGitMoveForRepo(tempRepo, "fake", [], m)).rejects.toThrow(/split/i);
-    /* .toThrowErrorMatchingInlineSnapshot() */
-  });
 });
