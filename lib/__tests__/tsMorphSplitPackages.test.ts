@@ -61,19 +61,19 @@ describe("tsMorphSplitPackages basic tests", () => {
     expect(result).toMatchInlineSnapshot(`
       "[
         {
-          \\"OldName\\": \\"lib/__tests__/test_fixtures.ts\\",
+          \\"OldName\\": \\"lib/mapping.ts\\",
           \\"NewRepo\\": \\"new\\",
           \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/__tests__/test_fixtures.ts\\",
+          \\"NewName\\": \\"src/mapping.ts\\",
           \\"Dependency Count\\": 0,
           \\"Package Dependencies\\": [],
           \\"dependencies\\": []
         },
         {
-          \\"OldName\\": \\"lib/mapping.ts\\",
-          \\"NewRepo\\": \\"new\\",
-          \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/mapping.ts\\",
+          \\"OldName\\": \\"lib/__tests__/test_fixtures.ts\\",
+          \\"NewRepo\\": \\"test_fixtures\\",
+          \\"NewPackage\\": \\"test_fixtures\\",
+          \\"NewName\\": \\"src/__tests__/test_fixtures.ts\\",
           \\"Dependency Count\\": 0,
           \\"Package Dependencies\\": [],
           \\"dependencies\\": []
@@ -96,10 +96,11 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"NewName\\": \\"lib/__tests__/git.test.ts\\",
           \\"Dependency Count\\": 3,
           \\"Package Dependencies\\": [
-            \\"new\\"
+            \\"new\\",
+            \\"test_fixtures\\"
           ],
           \\"dependencies\\": [
-            \\"new:src/__tests__/test_fixtures.ts\\",
+            \\"test_fixtures:src/__tests__/test_fixtures.ts\\",
             \\"ts-morph-split-packages:lib/git.ts\\",
             \\"new:src/mapping.ts\\"
           ]
@@ -111,10 +112,10 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"NewName\\": \\"lib/__tests__/tsMorphSplitPackages.test.ts\\",
           \\"Dependency Count\\": 1,
           \\"Package Dependencies\\": [
-            \\"new\\"
+            \\"test_fixtures\\"
           ],
           \\"dependencies\\": [
-            \\"new:src/__tests__/test_fixtures.ts\\"
+            \\"test_fixtures:src/__tests__/test_fixtures.ts\\"
           ]
         },
         {
@@ -154,7 +155,9 @@ describe("tsMorphSplitPackages basic tests", () => {
     expect(result).toMatchInlineSnapshot(`
       Object {
         "new": Array [],
+        "test_fixtures": Array [],
         "ts-morph-split-packages": Array [
+          "test_fixtures",
           "new",
         ],
       }

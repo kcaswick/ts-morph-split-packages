@@ -11,9 +11,9 @@ PackageMapping {
         "Repo": "new",
       },
       "lib/__tests__/test_" => Object {
-        "Package": "new",
+        "Package": "test_fixtures",
         "Path": "src/__tests__/test_",
-        "Repo": "new",
+        "Repo": "test_fixtures",
       },
       "lib" => Object {
         "Order": 10,
@@ -69,9 +69,9 @@ PackageMapping {
         MapResult {
           "New": Location {
             "Order": 0,
-            "Package": "new",
+            "Package": "test_fixtures",
             "Path": "src/__tests__/test_fixtures.ts",
-            "Repo": "new",
+            "Repo": "test_fixtures",
             "toString": [Function],
           },
           "OldName": "lib/__tests__/test_fixtures.ts",
@@ -108,9 +108,9 @@ PackageMapping {
       "Name": MapResult {
         "New": Location {
           "Order": 0,
-          "Package": "new",
+          "Package": "test_fixtures",
           "Path": "src/__tests__/test_fixtures.ts",
-          "Repo": "new",
+          "Repo": "test_fixtures",
           "toString": [Function],
         },
         "OldName": "lib/__tests__/test_fixtures.ts",
@@ -136,9 +136,9 @@ PackageMapping {
         MapResult {
           "New": Location {
             "Order": 0,
-            "Package": "new",
+            "Package": "test_fixtures",
             "Path": "src/__tests__/test_fixtures.ts",
-            "Repo": "new",
+            "Repo": "test_fixtures",
             "toString": [Function],
           },
           "OldName": "lib/__tests__/test_fixtures.ts",
@@ -264,9 +264,9 @@ PackageMapping {
       "Name": MapResult {
         "New": Location {
           "Order": 0,
-          "Package": "new",
+          "Package": "test_fixtures",
           "Path": "src/__tests__/test_fixtures.ts",
-          "Repo": "new",
+          "Repo": "test_fixtures",
           "toString": [Function],
         },
         "OldName": "lib/__tests__/test_fixtures.ts",

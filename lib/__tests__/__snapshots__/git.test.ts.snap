@@ -29,11 +29,13 @@ Array [
 
 exports[`prepareGitMove Should run and match the snapshot 1`] = `
 Map {
-  "new" => Array [
+  "test_fixtures" => Array [
     Array [
       "lib/__tests__/test_fixtures.ts",
       "src/__tests__/test_fixtures.ts",
     ],
+  ],
+  "new" => Array [
     Array [
       "lib/mapping.ts",
       "src/mapping.ts",

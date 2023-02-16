@@ -7,8 +7,8 @@
     },
     "lib/__tests__/test_": {
       "Path": "src/__tests__/test_",
-      "Repo": "new",
-      "Package": "new"
+      "Repo": "test_fixtures",
+      "Package": "test_fixtures"
     },
     "lib": {
       "Path": "lib",
