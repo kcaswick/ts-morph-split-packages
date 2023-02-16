@@ -108,12 +108,12 @@ export class PackageMapping {
       NewName: $_.Name.New?.Path,
       "Dependency Count": $_.dependencyMap.length,
       "Package Dependencies": $_.dependencyMap
-        .map(($_) => $_.New?.Package ?? "N/A")
+        .map((d) => d.New?.Package ?? "N/A")
         .sort()
         .filter((value, index, self) => self.indexOf(value) === index)
         .filter((value) => value !== $_.Name.New?.Package),
-      dependencies: $_.dependencyMap.map(($_) =>
-        undefined === $_.New ? $_.OldName : $_.New?.Repo + ":" + $_.New?.Path
+      dependencies: $_.dependencyMap.map((d) =>
+        undefined === d.New ? d.OldName : d.New?.Repo + ":" + d.New?.Path
       ),
     }));
     output = output.sort((a, b) =>

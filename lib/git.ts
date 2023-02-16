@@ -31,7 +31,7 @@ export const prepareGitMove = (
   return movesByRepo;
 };
 
-const ensureFoldersExist = async (targetPaths: string[]) => {
+const ensureFoldersExist = (targetPaths: string[]) => {
   console.debug(`Target paths: ${targetPaths.join(",")}`);
   const targetFolders = targetPaths
     .map((p) => dirname(p))

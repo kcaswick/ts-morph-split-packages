@@ -67,7 +67,7 @@ describe("executeGitMoveForRepo", () => {
   it("checkoutTempSimpleRepo", async () => {
     const [tempRepoPath, tempRepo] = await repoPromise;
     expect(existsSync(tempRepoPath));
-    expect(tempRepo.checkIsRepo(CheckRepoActions.IS_REPO_ROOT)).resolves.toBeTruthy();
+    await expect(tempRepo.checkIsRepo(CheckRepoActions.IS_REPO_ROOT)).resolves.toBeTruthy();
   });
 
   it("Execute default plan", async () => {
