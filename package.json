@@ -122,6 +122,28 @@
       "node": true
     },
     "rules": {
+      "@typescript-eslint/member-delimiter-style": [
+        "error",
+        {
+          "multiline": {
+            "delimiter": "semi",
+            "requireLast": true
+          },
+          "singleline": {
+            "delimiter": "semi",
+            "requireLast": false
+          }
+        }
+      ],
+      "@typescript-eslint/naming-convention": "off",
+      "@typescript-eslint/no-empty-interface": 0,
+      "@typescript-eslint/no-floating-promises": "error",
+      "@typescript-eslint/no-shadow": [
+        "error",
+        {
+          "ignoreTypeValueShadow": true
+        }
+      ],
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
@@ -130,8 +152,20 @@
           "varsIgnorePattern": "^_"
         }
       ],
+      "@typescript-eslint/prefer-namespace-keyword": "error",
+      "@typescript-eslint/prefer-regexp-exec": "warn",
+      "deprecation/deprecation": "error",
+      "no-duplicate-imports": "error",
+      "no-extra-semi": "error",
+      "no-fallthrough": "error",
+      "no-redeclare": "error",
+      "no-return-await": "warn",
       "no-unused-vars": "off",
-      "prettier/prettier": "warn"
+      "prettier/prettier": "warn",
+      "require-await": "error",
+      "semi": "error",
+      "simple-import-sort/exports": "warn",
+      "simple-import-sort/imports": "warn"
     }
   },
   "repository": "kcaswick/ts-morph-split-packages",

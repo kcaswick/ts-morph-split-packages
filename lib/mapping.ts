@@ -1,5 +1,5 @@
-import * as fs from "fs-extra";
 import { ICruiseResult } from "dependency-cruiser";
+import * as fs from "fs-extra";
 
 export type IConfigJson = {
   OldPatterns: Record<string, Location>;

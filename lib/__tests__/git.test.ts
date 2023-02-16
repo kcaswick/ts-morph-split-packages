@@ -3,17 +3,18 @@
  * Tests for lib\git.ts
  *
  */
+import { existsSync } from "fs";
+import { join } from "path";
+import simpleGit, { CheckRepoActions } from "simple-git";
+import temp from "temp";
+
+import * as sut from "../git";
+import { MapResult, PackageMapping } from "../mapping";
 import {
   checkoutTempSimpleRepo,
   createTemporaryRepository,
   loadSimpleMadge,
 } from "./test_fixtures";
-import * as sut from "../git";
-import { existsSync } from "fs";
-import { join } from "path";
-import simpleGit, { CheckRepoActions } from "simple-git";
-import temp from "temp";
-import { MapResult, PackageMapping } from "../mapping";
 describe("prepareGitMove", () => {
   it("Expect to not log errors in console", () => {
     const spy = jest.spyOn(global.console, "error");

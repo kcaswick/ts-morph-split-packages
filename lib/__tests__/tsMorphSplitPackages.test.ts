@@ -2,6 +2,7 @@
 import { createWriteStream } from "fs";
 import madge from "madge";
 import { promisify } from "util";
+
 import { loadSimpleMadge, simpleMadgeDependenciesPath } from "./test_fixtures";
 
 describe("tsMorphSplitPackages basic tests", () => {
