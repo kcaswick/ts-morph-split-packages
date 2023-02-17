@@ -1,6 +1,6 @@
 import { ensureDir } from "fs-extra";
 import { basename, dirname, join } from "path";
-import { BranchSummary, GitError, SimpleGit } from "simple-git";
+import { BranchSummary, GitError, MoveResult, SimpleGit } from "simple-git";
 
 import { PackageMapping } from "./mapping";
 
@@ -103,12 +103,19 @@ export const executeGitMoveForRepos = async (
 
   const baseRepoName: string = basename(process.cwd());
 
-  let moveResults = await Promise.all(
-    Array.from(moves.entries()).flatMap(async ([repoPath, repoMoves]) => {
-      const results = await executeGitMoveForRepo(currentRepo, repoPath, repoMoves, mapping);
+  let moveResults = await Array.from(moves.entries()).reduce(
+    async (lastProm, [repoPath, repoMoves]) => {
+      const resultSoFar: (false | MoveResult)[] = await lastProm;
+      const results: (false | MoveResult)[] = await executeGitMoveForRepo(
+        currentRepo,
+        repoPath,
+        repoMoves,
+        mapping
+      );
       await currentRepo.checkout(startCommitish);
-      return results;
-    })
+      return [...resultSoFar, ...results];
+    },
+    Promise.resolve<(false | MoveResult)[]>([])
   );
 
   const baseMoves: Parameters<SimpleGit["mv"]>[] = mapping.depMap

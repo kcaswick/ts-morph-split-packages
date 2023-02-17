@@ -3,4 +3,5 @@
     "overrideConfigFile": "./package.json"
   },
   "jest.jestCommandLine": "npm run test -- ",
+  "sarif-viewer.connectToGithubCodeScanning": "off",
 }

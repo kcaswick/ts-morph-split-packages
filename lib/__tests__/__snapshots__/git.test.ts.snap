@@ -43,6 +43,27 @@ Map {
 }
 `;
 
+exports[`executeGitMoveForRepos Complete simple split 2`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "src/__tests__/test_fixtures.ts",
+      },
+    ],
+  },
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "src/mapping.ts",
+      },
+    ],
+  },
+]
+`;
+
 exports[`prepareGitMove Should run and match the snapshot 1`] = `
 Map {
   "test_fixtures" => Array [
