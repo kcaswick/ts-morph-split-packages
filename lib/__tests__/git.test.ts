@@ -76,8 +76,6 @@ describe("executeGitMoveForRepo", () => {
     const results = expect(
       sut.executeGitMoveForRepo(tempRepo, "new", plan.get("new")!, m)
     ).resolves;
-    // Wait for all promises to complete
-    await new Promise(setImmediate);
     await results.toMatchSnapshot();
     expect(existsSync(join(tempRepoPath, "lib/index.ts"))).toBeFalsy();
     expect(existsSync(join(tempRepoPath, "src/mapping.ts"))).toBeTruthy();
@@ -87,8 +85,6 @@ describe("executeGitMoveForRepo", () => {
     const resultsTestFixtures = expect(
       sut.executeGitMoveForRepo(tempRepo, "test_fixtures", plan.get("test_fixtures")!, m)
     ).resolves;
-    // Wait for all promises to complete
-    await new Promise(setImmediate);
     await resultsTestFixtures.toMatchSnapshot();
     expect(existsSync(join(tempRepoPath, "src/__tests__/test_fixtures.ts"))).toBeTruthy();
   }, 15000);
@@ -102,6 +98,19 @@ describe("executeGitMoveForRepos", () => {
     await expect(sut.executeGitMoveForRepos(tempRepo, new Map(), m)).rejects.toThrow(/split/i);
     /* .toThrowErrorMatchingInlineSnapshot() */
   });
+  it("Complete simple split", async () => {
+    const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
+    const m = loadSimpleMadge();
+    const plan = sut.prepareGitMove(m);
+    expect(plan).toMatchSnapshot();
+    const results = expect(sut.executeGitMoveForRepos(tempRepo, plan, m)).resolves;
+
+    await results.toMatchSnapshot();
+
+    expect(existsSync(join(tempRepoPath, "lib/index.ts"))).toBeTruthy();
+    expect(existsSync(join(tempRepoPath, "lib/mapping.ts"))).toBeFalsy();
+    expect(existsSync(join(tempRepoPath, "lib/__tests__/test_fixtures.ts"))).toBeFalsy();
+  }, 15000);
 });
 describe("throwIfRepoNotReady", () => {
   it("Should throw if dir is not a repo", async () => {

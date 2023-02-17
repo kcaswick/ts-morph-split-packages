@@ -55,12 +55,7 @@ export const executeGitMoveForRepo = async (
 ) => {
   await throwIfRepoNotReady(currentRepo);
   await currentRepo.checkoutLocalBranch(mapping.config.BranchPrefix + targetRepo);
-  await currentRepo.rm(
-    mapping.depMap
-      .filter((x) => x.Name.New && x.Name.New.Repo !== targetRepo)
-      .map((x) => x.Name.OldName)
-  );
-  await currentRepo.commit(`Remove all files that are not part of ${targetRepo}`);
+  await removeFilesNotInTargetRepo(currentRepo, targetRepo, mapping);
 
   const currentRepoPath = await currentRepo.revparse("--absolute-git-dir");
   await ensureFoldersExist(moves.map((x) => join(currentRepoPath, "..", x[1])));
@@ -78,7 +73,7 @@ export const executeGitMoveForRepo = async (
     throw new AggregateError(rejectedPromises.map((p) => p.reason));
   }
 
-  return results;
+  return results.map((p) => p.status === "fulfilled" && p.value);
 };
 
 export const executeGitMoveForRepos = async (
@@ -104,13 +99,56 @@ export const executeGitMoveForRepos = async (
     );
   }
 
-  return Array.from(moves.entries()).map(async ([repoPath, repoMoves]) => {
-    const startCommitish = await currentRepo.revparse(["HEAD"]);
-    const results = executeGitMoveForRepo(currentRepo, repoPath, repoMoves, mapping);
-    await currentRepo.checkout(startCommitish);
-    return results;
-  });
+  const startCommitish = await currentRepo.revparse(["HEAD"]);
+
+  const baseRepoName: string = basename(process.cwd());
+
+  let moveResults = await Promise.all(
+    Array.from(moves.entries()).flatMap(async ([repoPath, repoMoves]) => {
+      const results = await executeGitMoveForRepo(currentRepo, repoPath, repoMoves, mapping);
+      await currentRepo.checkout(startCommitish);
+      return results;
+    })
+  );
+
+  const baseMoves: Parameters<SimpleGit["mv"]>[] = mapping.depMap
+    .filter(
+      (x) =>
+        !x.Name.isUnmapped() &&
+        x.Name.New &&
+        (x.Name.New.Repo === "N/A" || x.Name.New.Repo === baseRepoName) &&
+        x.Name.OldName !== x.Name.New.Path
+    )
+    .map((x) => [x.Name.OldName, x.Name.New?.Path ?? ""]);
+  const baseMoveResults = await executeGitMoveForRepo(
+    currentRepo,
+    baseRepoName,
+    baseMoves,
+    mapping
+  );
+  moveResults = moveResults.concat(baseMoveResults);
+
+  return moveResults;
 };
+
+/**
+ * Removes all files that are not part of the target repository.
+ * @param currentRepo The git repo that we are currently on.
+ * @param targetRepo The name of the repo that we are splitting to.
+ * @param mapping The list of packages that are in the repository.
+ */
+async function removeFilesNotInTargetRepo(
+  currentRepo: SimpleGit,
+  targetRepo: string,
+  mapping: PackageMapping
+) {
+  await currentRepo.rm(
+    mapping.depMap
+      .filter((x) => x.Name.New && x.Name.New.Repo !== targetRepo)
+      .map((x) => x.Name.OldName)
+  );
+  await currentRepo.commit(`Remove all files that are not part of ${targetRepo}`);
+}
 
 const throwIfRepoNotReady = async (currentRepo: SimpleGit) => {
   if (!(await currentRepo.checkIsRepo())) {

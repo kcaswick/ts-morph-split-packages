@@ -3,15 +3,12 @@
 exports[`executeGitMoveForRepo Execute default plan 1`] = `
 Array [
   Object {
-    "status": "fulfilled",
-    "value": Object {
-      "moves": Array [
-        Object {
-          "from": "lib/mapping.ts",
-          "to": "src/mapping.ts",
-        },
-      ],
-    },
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "src/mapping.ts",
+      },
+    ],
   },
 ]
 `;
@@ -19,17 +16,31 @@ Array [
 exports[`executeGitMoveForRepo Execute default plan 2`] = `
 Array [
   Object {
-    "status": "fulfilled",
-    "value": Object {
-      "moves": Array [
-        Object {
-          "from": "lib/__tests__/test_fixtures.ts",
-          "to": "src/__tests__/test_fixtures.ts",
-        },
-      ],
-    },
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "src/__tests__/test_fixtures.ts",
+      },
+    ],
   },
 ]
+`;
+
+exports[`executeGitMoveForRepos Complete simple split 1`] = `
+Map {
+  "test_fixtures" => Array [
+    Array [
+      "lib/__tests__/test_fixtures.ts",
+      "src/__tests__/test_fixtures.ts",
+    ],
+  ],
+  "new" => Array [
+    Array [
+      "lib/mapping.ts",
+      "src/mapping.ts",
+    ],
+  ],
+}
 `;
 
 exports[`prepareGitMove Should run and match the snapshot 1`] = `

@@ -48,7 +48,7 @@ export async function createTemporaryRepository(
 }
 
 export function checkoutTempSimpleRepo() {
-  const ourRepo = simpleGit({});
+  const ourRepo = simpleGit({ maxConcurrentProcesses: 1 });
 
   return checkoutTemporaryRepo(ourRepo, "72f460b7e4fb2af3fb15b0b6eb84d53a9b9dad98");
 }
