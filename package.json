@@ -1,6 +1,6 @@
 {
   "name": "ts-morph-split-packages",
-  "version": "0.0.0",
+  "version": "0.0.0-placeholder",
   "description": "Use dependency maps to break up TypeScript repos into smaller packages",
   "homepage": "",
   "author": {
@@ -8,8 +8,7 @@
     "email": "24442686+kcaswick@users.noreply.github.com"
   },
   "files": [
-    "dist",
-    "lib"
+    "dist"
   ],
   "main": "dist/cjs/index.cjs",
   "module": "dist/esm/index.mjs",
@@ -21,9 +20,11 @@
     "dependencies"
   ],
   "scripts": {
-    "build": "tsc -p ./",
+    "build": "tsc -p ./ && npm run rollup",
     "pretest": "eslint .",
-    "prepare": "husky install",
+    "prepack": "zx -e \"let shell = require(`shelljs`); shell.mv(`package*.json`, `temp/`); shell.cp(`temp/package*.json`, `.`); require(`nerdbank-gitversioning`).setPackageVersion();\"",
+    "postpack": "zx -e \"let shell = require(`shelljs`); shell.mv(`temp/package*.json`, `.`);\"",
+    "prepare": "zx -e \"if(process.env.npm_command !== `pack`) {require(`husky`).install();} \"",
     "prettify": "prettier --write .",
     "rollup": "rollup -c rollup.config.mjs",
     "test": "jest"
@@ -63,7 +64,8 @@
     "rollup-plugin-dts": "^5.1.1",
     "shelljs": "^0.8.5",
     "ts-jest": "27.1.4",
-    "typescript": "~4.5.5"
+    "typescript": "~4.5.5",
+    "zx": "^7.1.1"
   },
   "optionalDependencies": {
     "@types/madge": "^5.0.0",
