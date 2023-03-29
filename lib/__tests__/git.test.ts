@@ -60,7 +60,7 @@ describe("executeGitMoveForRepo", () => {
 
   const spy = jest.spyOn(global.console, "error");
   const m = loadSimpleMadge();
-  const plan = sut.prepareGitMove(m);
+  const plan = sut.prepareGitMove(m); // For a snapshot, see `prepareGitMove Should run and match the snapshot 1`
   expect(plan.get("new")).toBeDefined();
   expect(spy).not.toHaveBeenCalled();
 
