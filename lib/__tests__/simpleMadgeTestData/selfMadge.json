@@ -7,6 +7,11 @@
     "lib/git.ts",
     "lib/mapping.ts"
   ],
+  "lib/__tests__/morph.test.ts": [
+    "lib/__tests__/test_fixtures.ts",
+    "lib/mapping.ts",
+    "lib/morph.ts"
+  ],
   "lib/__tests__/test_fixtures.ts": [],
   "lib/__tests__/tsMorphSplitPackages.test.ts": [
     "lib/__tests__/test_fixtures.ts"
@@ -18,5 +23,8 @@
     "lib/git.ts",
     "lib/mapping.ts"
   ],
-  "lib/mapping.ts": []
+  "lib/mapping.ts": [],
+  "lib/morph.ts": [
+    "lib/mapping.ts"
+  ]
 }
