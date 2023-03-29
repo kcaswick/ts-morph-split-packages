@@ -17,8 +17,7 @@ export const prepareGitMove = (
   mapping.depMap
     .filter(
       (x) =>
-        !x.Name.isUnmapped() &&
-        x.Name.New &&
+        x.Name.isMapped() &&
         x.Name.New.Repo !== "N/A" &&
         x.Name.New.Repo !== currentRepo &&
         x.Name.OldName !== x.Name.New.Path
@@ -55,10 +54,13 @@ export const executeGitMoveForRepo = async (
 ) => {
   await throwIfRepoNotReady(currentRepo);
   await currentRepo.checkoutLocalBranch(mapping.config.BranchPrefix + targetRepo);
+  console.debug(`Removing files not in ${targetRepo}`);
   await removeFilesNotInTargetRepo(currentRepo, targetRepo, mapping);
 
+  console.debug(`Ensuring destination folders exist for ${targetRepo}`);
   const currentRepoPath = await currentRepo.revparse("--absolute-git-dir");
   await ensureFoldersExist(moves.map((x) => join(currentRepoPath, "..", x[1])));
+  console.debug(`Moving files for ${targetRepo}`);
   const results = await Promise.allSettled(moves.map((x) => currentRepo.mv(...x)));
   if (results.every((p) => p.status === "fulfilled")) {
     await currentRepo.commit(`Move all files for ${targetRepo} to their new locations`);
@@ -121,8 +123,7 @@ export const executeGitMoveForRepos = async (
   const baseMoves: Parameters<SimpleGit["mv"]>[] = mapping.depMap
     .filter(
       (x) =>
-        !x.Name.isUnmapped() &&
-        x.Name.New &&
+        x.Name.isMapped() &&
         (x.Name.New.Repo === "N/A" || x.Name.New.Repo === baseRepoName) &&
         x.Name.OldName !== x.Name.New.Path
     )
@@ -149,11 +150,11 @@ async function removeFilesNotInTargetRepo(
   targetRepo: string,
   mapping: PackageMapping
 ) {
-  await currentRepo.rm(
-    mapping.depMap
-      .filter((x) => x.Name.New && x.Name.New.Repo !== targetRepo)
-      .map((x) => x.Name.OldName)
-  );
+  const filesToRemove = mapping.depMap
+    .filter((x) => x.Name.isMapped() && x.Name.New.Repo !== targetRepo)
+    .map((x) => x.Name.OldName);
+  console.debug(`Files to remove: ${filesToRemove.join(",")}`);
+  await currentRepo.rm(filesToRemove);
   await currentRepo.commit(`Remove all files that are not part of ${targetRepo}`);
 }
 

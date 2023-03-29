@@ -1,5 +1,6 @@
 import { ICruiseResult } from "dependency-cruiser";
 import * as fs from "fs-extra";
+import tb from "ts-toolbelt";
 
 export type IConfigJson = {
   OldPatterns: Record<string, Location>;
@@ -37,25 +38,76 @@ class Location implements ILocation {
     `${this.Package === this.Repo ? "" : `"${this.Package}"`}${this.Repo}:${this.Path}`;
 }
 
+/**
+ * IMapResult is an interface that represents a single mapping result. The OldName
+ * field is the path that was mapped from. The New field is the Location that
+ * was mapped to. If the New field is null or undefined, then the object was
+ * not mapped.
+ */
 export type IMapResult = {
   OldName: string;
   New?: Location;
 };
 
+/**
+ * MapResult is a class that represents a single mapping result. The OldName
+ * field is the path that was mapped from. The New field is the Location that
+ * was mapped to. If the New field is null or undefined, then the object was
+ * not mapped.
+ */
 export class MapResult implements IMapResult {
+  /** The path that was mapped from. */
   OldName: string;
+  /**
+   * The Location that was mapped to. If this is null or undefined, then the
+   * file was not mapped. The new path can be found in the New.Path field.
+   * @see {@link Location}
+   */
   New?: Location;
 
   /**
+   * Creates a new MapResult from any object that implements the IMapResult
+   * interface. This is useful for converting the results of JSON.parse into
+   * MapResult objects.
    *
+   * @param source The object to create the MapResult from.
    */
   constructor(source: IMapResult) {
     this.OldName = source.OldName;
     this.New = source.New;
   }
 
-  public isUnmapped = () => this.New === undefined;
+  /** This code checks that the New field is not null or undefined. If it is, the
+  function will return false, indicating that the object is not mapped. If
+  the New field is not null or undefined, the function will return true,
+  indicating that the object is mapped.
 
+  For type guard purposes, also available in a negated form: {@link isUnmapped}
+  @returns {boolean} True if the file is mapped, false if the file is unmapped.
+  */
+  public isMapped: () => this is tb.O.NonNullable<tb.O.Required<IMapResult, "New">, "New"> = () =>
+    this.New !== undefined;
+
+  /**
+   * This code checks that the New field is null or undefined. If it is, the
+   * function will return true, indicating that the object is not mapped. If
+   * the New field is not null or undefined, the function will return false,
+   * indicating that the object is mapped.
+   *
+   * For type guard purposes, also available in a negated form: {@link isMapped}
+   * @returns {boolean} True if the file is unmapped, false if the file is mapped.
+   */
+  public isUnmapped: () => this is tb.O.Overwrite<IMapResult, { New: undefined }> = () =>
+    this.New === undefined;
+
+  /**
+   * Returns the string representation of this entry.
+   * @returns The string representation of this entry.
+   * @example <caption>Example of a mapped entry</caption>
+   * "lib/mapping.ts => src/mapping.ts"
+   * @example <caption>Example of an unmapped entry</caption>
+   * "lib/mapping.ts (unmapped)"
+   */
   public toString = () => `${this.OldName}${this.isUnmapped() ? " (unmapped)" : ` => ${this.New}`}`;
 }
 

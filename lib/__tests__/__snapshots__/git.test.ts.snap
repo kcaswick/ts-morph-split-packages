@@ -1,6 +1,23 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`executeGitMoveForRepo Execute default plan 1`] = `
+Map {
+  "test_fixtures" => Array [
+    Array [
+      "lib/__tests__/test_fixtures.ts",
+      "src/__tests__/test_fixtures.ts",
+    ],
+  ],
+  "new" => Array [
+    Array [
+      "lib/mapping.ts",
+      "src/mapping.ts",
+    ],
+  ],
+}
+`;
+
+exports[`executeGitMoveForRepo Execute default plan 2`] = `
 Array [
   Object {
     "moves": Array [
@@ -13,7 +30,7 @@ Array [
 ]
 `;
 
-exports[`executeGitMoveForRepo Execute default plan 2`] = `
+exports[`executeGitMoveForRepo Execute default plan 3`] = `
 Array [
   Object {
     "moves": Array [
