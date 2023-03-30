@@ -5,13 +5,125 @@ import shell, { mv } from "shelljs";
 import simpleGit, { SimpleGit } from "simple-git";
 import { mkdir, track } from "temp";
 
-import { PackageMapping } from "..";
+import { executeGitMoveForRepos, PackageMapping, prepareGitMove } from "..";
 
 // Automatically track and cleanup files at exit
 track();
 
 export const simpleMadgeConfigPath = "lib/__tests__/simpleMadgeTestData/PackageMap.json";
 export const simpleMadgeDependenciesPath = "lib/__tests__/simpleMadgeTestData/selfMadge.json";
+
+export enum ProcessPhase {
+  Initial = "Initial",
+  BuildDependencyGraph = "BuildDependencyGraph",
+  Map = "Map",
+  Move = "Move",
+}
+
+export interface IBaseProcessPhaseState {
+  currentPhase: ProcessPhase | undefined;
+}
+
+export interface IInitialPhaseState extends IBaseProcessPhaseState {
+  currentPhase: ProcessPhase.Initial | undefined;
+  tempRepoPath: string;
+  tempRepo: SimpleGit;
+}
+
+type noPhase<T> = Omit<T, "currentPhase">;
+
+interface IDependencyGraphPhaseState extends noPhase<IInitialPhaseState> {
+  currentPhase: ProcessPhase.BuildDependencyGraph;
+  madgeDependencyJsonPath: string;
+}
+
+interface IMapPhaseState extends noPhase<IDependencyGraphPhaseState> {
+  currentPhase: ProcessPhase.Map;
+  packageMapping: PackageMapping;
+}
+
+export interface IMovePhaseState extends noPhase<IMapPhaseState> {
+  currentPhase: ProcessPhase.Move;
+}
+
+// Interface union of all possible states
+export type IProcessPhaseState =
+  | IInitialPhaseState
+  | IDependencyGraphPhaseState
+  | IMapPhaseState
+  | IMovePhaseState;
+
+/* eslint-disable no-case-declarations */
+export async function advanceToPhase(
+  endPhase: ProcessPhase.BuildDependencyGraph,
+  startingState: Readonly<IInitialPhaseState>,
+): Promise<IDependencyGraphPhaseState>;
+export async function advanceToPhase(
+  endPhase: ProcessPhase.Map,
+  startingState: Readonly<IInitialPhaseState | IDependencyGraphPhaseState>,
+  getPackageMap: (madgeDependencyJsonPath: string) => PackageMapping
+): Promise<IMapPhaseState>;
+// Multiphase move overload
+export async function advanceToPhase(
+  endPhase: ProcessPhase.Move,
+  startingState: Readonly<IInitialPhaseState | IDependencyGraphPhaseState>,
+  getPackageMap: (madgeDependencyJsonPath: string) => PackageMapping
+): Promise<IMovePhaseState>;
+// Single phase move overload
+export async function advanceToPhase(
+  endPhase: ProcessPhase.Move,
+  startingState: Readonly<IMapPhaseState>
+): Promise<IMovePhaseState>;
+
+export async function advanceToPhase(
+  endPhase: ProcessPhase,
+  startingState: Readonly<IProcessPhaseState>,
+  getPackageMap?: (madgeDependencyJsonPath: string) => PackageMapping
+): Promise<IProcessPhaseState> {
+  // Shallow clone the starting state so we can mutate it
+  const currentState = Object.assign(
+    Object.create(Object.getPrototypeOf(startingState)),
+    startingState
+  );
+
+  switch (startingState.currentPhase ?? ProcessPhase.Initial) {
+    default:
+      throw new Error(`Unknown phase: ${endPhase}`);
+    case undefined:
+      await ensureDir(currentState.tempRepoPath);
+    // fall through to next phase
+
+    case ProcessPhase.Initial:
+      const insideMadgeDependencyJsonPath = await generateMadgeDependencyJsonForRepo(
+        currentState.tempRepoPath
+      );
+      currentState.madgeDependencyJsonPath = moveFileOutsideRepo(
+        currentState.tempRepoPath,
+        insideMadgeDependencyJsonPath,
+        InputFileType.DependencyJson
+      );
+      currentState.currentPhase = ProcessPhase.BuildDependencyGraph;
+      if (endPhase === ProcessPhase.BuildDependencyGraph) break;
+    // fall through to next phase
+
+    case ProcessPhase.BuildDependencyGraph:
+      if (getPackageMap === undefined)
+        throw new Error("getPackageMap is required to complete the Map state");
+      currentState.packageMapping = getPackageMap(currentState.madgeDependencyJsonPath);
+      currentState.currentPhase = ProcessPhase.Map;
+      if (endPhase === ProcessPhase.Map) break;
+    // fall through to next phase
+
+    case ProcessPhase.Map:
+      const moveTasks = prepareGitMove(currentState.packageMapping);
+      await executeGitMoveForRepos(currentState.tempRepo, moveTasks, currentState.packageMapping);
+      if (endPhase === ProcessPhase.Move) break;
+    // fall through to next phase
+  }
+
+  return currentState;
+}
+/* eslint-enable no-case-declarations */
 
 export async function checkoutTemporaryRepo(sourceRepo: SimpleGit, commitish: string) {
   const [destDir, destRepo] = await createTemporaryRepository();

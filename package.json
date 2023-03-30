@@ -145,6 +145,8 @@
       "@typescript-eslint/naming-convention": "off",
       "@typescript-eslint/no-empty-interface": 0,
       "@typescript-eslint/no-floating-promises": "error",
+      "no-redeclare": "off",
+      "@typescript-eslint/no-redeclare": ["error"],
       "@typescript-eslint/no-shadow": [
         "error",
         {
@@ -166,7 +168,6 @@
       "no-duplicate-imports": "error",
       "no-extra-semi": "error",
       "no-fallthrough": "error",
-      "no-redeclare": "error",
       "no-return-await": "warn",
       "no-unused-vars": "off",
       "prettier/prettier": "warn",
