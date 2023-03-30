@@ -1,10 +1,15 @@
+/// <reference types="jest" />
 // X import assert from "assert";
+
+// import { expect } from "@jest/globals";
 import { createWriteStream /* , mkdirSync */ } from "fs";
 // X import {cruise} from "dependency-cruiser";
-import { promisify } from "util";
-import { PackageMapping } from "../index";
 import shell from "shelljs";
+import { promisify } from "util";
+
 // X import zx, { fs } from "zx";
+import { PackageMapping } from "../index";
+import { expect } from "./customMatchers";
 
 describe("complex repository tests", () => {
   const complexConfigPath = "lib/__tests__/dependency-cruiser/PackageMap.json";
@@ -52,9 +57,26 @@ describe("complex repository tests", () => {
     return m;
   }
 
+  // const anyMapResult: (obj: E): any = expect.objectContaining<Partial<MapResult>>({
+  //   isMapped: expect.any(Function),
+  //   isUnmapped: expect.any(Function),
+  //   toString: expect.any(Function),
+  // });
+
   it("test loading generated data", () => {
     const m = load();
-    expect(m).toMatchSnapshot();
+    // Filter methods out of snapshots
+    // https://jestjs.io/docs/en/snapshot-testing#property-matchers
+    expect(m).toMatchSnapshot(
+      /* <PackageMapping> */ {
+        depMap: expect.arrayContaining([
+          expect.objectContaining({
+            Name: expect.toBeMapResult?.(),
+            dependencyMap: expect.arrayContaining([expect.toBeMapResult?.()]),
+          }),
+        ]),
+      }
+    );
   });
 
   it("test mapPackage", () => {
