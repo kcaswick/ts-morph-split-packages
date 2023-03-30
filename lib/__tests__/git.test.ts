@@ -13,8 +13,24 @@ import { MapResult, PackageMapping } from "../mapping";
 import {
   checkoutTempSimpleRepo,
   createTemporaryRepository,
+  generateMadgeDependencyJsonForRepo,
+  InputFileType,
   loadSimpleMadge,
+  moveFileOutsideRepo,
 } from "./test_fixtures";
+
+async function buildPlan(tempRepoPath: string) {
+  const oldDependencyJsonPath = await generateMadgeDependencyJsonForRepo(tempRepoPath);
+  const dependencyJsonPath = moveFileOutsideRepo(
+    tempRepoPath,
+    oldDependencyJsonPath,
+    InputFileType.DependencyJson
+  );
+  const m = loadSimpleMadge(dependencyJsonPath);
+  const plan = sut.prepareGitMove(m);
+  return { m, plan };
+}
+
 describe("prepareGitMove", () => {
   it("Expect to not log errors in console", () => {
     const spy = jest.spyOn(global.console, "error");
@@ -57,12 +73,16 @@ describe("prepareGitMove", () => {
 });
 describe("executeGitMoveForRepo", () => {
   const repoPromise = checkoutTempSimpleRepo();
+  const planPromise = repoPromise.then(([tempRepoPath]) => buildPlan(tempRepoPath));
 
   const spy = jest.spyOn(global.console, "error");
-  const m = loadSimpleMadge();
-  const plan = sut.prepareGitMove(m); // For a snapshot, see `prepareGitMove Should run and match the snapshot 1`
-  expect(plan.get("new")).toBeDefined();
-  expect(spy).not.toHaveBeenCalled();
+
+  it("test setup successful and matches snapshot", async () => {
+    const { plan } = await planPromise;
+    expect(plan.get("new")).toBeDefined();
+    expect(plan).toMatchSnapshot();
+    expect(spy).not.toHaveBeenCalled();
+  });
 
   it("checkoutTempSimpleRepo", async () => {
     const [tempRepoPath, tempRepo] = await repoPromise;
@@ -73,10 +93,11 @@ describe("executeGitMoveForRepo", () => {
   it("Execute default plan", async () => {
     const [tempRepoPath, tempRepo] = await repoPromise;
     const startCommitish = await tempRepo.revparse(["HEAD"]);
+    const { m, plan } = await planPromise;
     const results = expect(
       sut.executeGitMoveForRepo(tempRepo, "new", plan.get("new")!, m)
     ).resolves;
-    await results.toMatchSnapshot();
+    await results.toMatchSnapshot(`results from move to new`);
     expect(existsSync(join(tempRepoPath, "lib/index.ts"))).toBeFalsy();
     expect(existsSync(join(tempRepoPath, "src/mapping.ts"))).toBeTruthy();
 
@@ -85,7 +106,7 @@ describe("executeGitMoveForRepo", () => {
     const resultsTestFixtures = expect(
       sut.executeGitMoveForRepo(tempRepo, "test_fixtures", plan.get("test_fixtures")!, m)
     ).resolves;
-    await resultsTestFixtures.toMatchSnapshot();
+    await resultsTestFixtures.toMatchSnapshot(`results from move to test_fixtures`);
     expect(existsSync(join(tempRepoPath, "src/__tests__/test_fixtures.ts"))).toBeTruthy();
   }, 15000);
 });
@@ -100,8 +121,8 @@ describe("executeGitMoveForRepos", () => {
   });
   it("Complete simple split", async () => {
     const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
-    const m = loadSimpleMadge();
-    const plan = sut.prepareGitMove(m);
+    const planPromise = buildPlan(tempRepoPath);
+    const { m, plan } = await planPromise;
     expect(plan).toMatchSnapshot();
     const results = expect(sut.executeGitMoveForRepos(tempRepo, plan, m)).resolves;
 

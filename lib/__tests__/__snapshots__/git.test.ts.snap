@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`executeGitMoveForRepo Execute default plan 1`] = `
+exports[`executeGitMoveForRepo test setup successful and matches snapshot 1`] = `
 Map {
   "test_fixtures" => Array [
     Array [
@@ -17,7 +17,7 @@ Map {
 }
 `;
 
-exports[`executeGitMoveForRepo Execute default plan 2`] = `
+exports[`executeGitMoveForRepo Execute default plan: results from move to new 1`] = `
 Array [
   Object {
     "moves": Array [
@@ -30,7 +30,7 @@ Array [
 ]
 `;
 
-exports[`executeGitMoveForRepo Execute default plan 3`] = `
+exports[`executeGitMoveForRepo Execute default plan: results from move to test_fixtures 1`] = `
 Array [
   Object {
     "moves": Array [

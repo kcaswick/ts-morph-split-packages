@@ -1,4 +1,7 @@
-import shell from "shelljs";
+import { ensureDir } from "fs-extra";
+import madge from "madge";
+import path from "path";
+import shell, { mv } from "shelljs";
 import simpleGit, { SimpleGit } from "simple-git";
 import { mkdir, track } from "temp";
 
@@ -53,8 +56,50 @@ export function checkoutTempSimpleRepo() {
   return checkoutTemporaryRepo(ourRepo, "72f460b7e4fb2af3fb15b0b6eb84d53a9b9dad98");
 }
 
-export function loadSimpleMadge() {
+export async function generateMadgeDependencyJsonForRepo(
+  repoPath: string,
+  dependencyJsonPath = path.join(repoPath, "/doc/dependency.json")
+) {
+  const m = await madge([path.join(repoPath, "lib/")], {
+    baseDir: repoPath,
+    fileExtensions: ["ts", "tsx", "js", "jsx"],
+    tsConfig: "tsconfig.json",
+  });
+  const dependencies = m.obj();
+  const dependenciesJson = JSON.stringify(dependencies, undefined, 2);
+  await ensureDir(path.dirname(dependencyJsonPath));
+  shell.echo(dependenciesJson).to(dependencyJsonPath);
+  return dependencyJsonPath;
+}
+
+export function loadSimpleMadge(dependencyJsonPath = simpleMadgeDependenciesPath) {
   const m = new PackageMapping();
-  m.getPackageMap(simpleMadgeDependenciesPath, simpleMadgeConfigPath);
+  m.getPackageMap(dependencyJsonPath, simpleMadgeConfigPath);
   return m;
+}
+
+export enum InputFileType {
+  DependencyJson = "dependency.json",
+  PackageMapJson = "PackageMap.json",
+}
+
+/**
+ * Moves a file outside of the repo, so that it won't trigger uncommitted change warnings.
+ * @param repoPath The path to the repo
+ * @param oldFilePath The path to the file to move
+ * @returns The new path to the file
+ */
+export function moveFileOutsideRepo(
+  repoPath: string,
+  oldFilePath: string,
+  fileType: InputFileType
+) {
+  const newFilePath = path.format({
+    ...path.parse(repoPath),
+    base: undefined /* so ext is not ignored */,
+    ext: "." + fileType,
+  });
+  console.debug(`${InputFileType}Path"`, newFilePath, `old${InputFileType}Path`, oldFilePath);
+  mv(oldFilePath, newFilePath);
+  return newFilePath;
 }

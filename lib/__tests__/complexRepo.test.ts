@@ -19,7 +19,9 @@ describe("complex repository tests", () => {
     // X zx.cd("../dependency-cruiser");
     const depcruise =
       // X await zx.$`npx depcruise src --include-only "^src" --config --output-type json`;
-      shell.exec('npx depcruise src --include-only "^src" --config --output-type json');
+      shell.exec('npx depcruise src --include-only "^src" --config --output-type json', {
+        silent: true,
+      });
 
     shell.cd(originalWorkingDirectory);
 
