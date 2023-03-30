@@ -8,8 +8,7 @@ import shell from "shelljs";
 import { promisify } from "util";
 
 // X import zx, { fs } from "zx";
-import { PackageMapping } from "../index";
-import { expect } from "./customMatchers";
+import { IMapResult, MapResult, PackageMapping } from "../index";
 
 describe("complex repository tests", () => {
   const complexConfigPath = "lib/__tests__/dependency-cruiser/PackageMap.json";
@@ -24,7 +23,9 @@ describe("complex repository tests", () => {
     // X zx.cd("../dependency-cruiser");
     const depcruise =
       // X await zx.$`npx depcruise src --include-only "^src" --config --output-type json`;
-      shell.exec('npx depcruise src --include-only "^src" --config --output-type json');
+      shell.exec('npx depcruise src --include-only "^src" --config --output-type json', {
+        silent: true,
+      });
 
     shell.cd(originalWorkingDirectory);
 
@@ -57,26 +58,24 @@ describe("complex repository tests", () => {
     return m;
   }
 
-  // const anyMapResult: (obj: E): any = expect.objectContaining<Partial<MapResult>>({
-  //   isMapped: expect.any(Function),
-  //   isUnmapped: expect.any(Function),
-  //   toString: expect.any(Function),
-  // });
+  // Not sure why MapResult.prototype is not working for sampleMapResult, so had to instantiate it instead
+  const sampleMapResult = new MapResult({} as unknown as IMapResult);
+  const mapResultMatcher = {
+    isMapped: sampleMapResult.isMapped,
+    isUnmapped: sampleMapResult.isUnmapped,
+    toString: sampleMapResult.toString,
+  } as Record<keyof MapResult, unknown>;
 
   it("test loading generated data", () => {
     const m = load();
     // Filter methods out of snapshots
     // https://jestjs.io/docs/en/snapshot-testing#property-matchers
-    expect(m).toMatchSnapshot(
-      /* <PackageMapping> */ {
-        depMap: expect.arrayContaining([
-          expect.objectContaining({
-            Name: expect.toBeMapResult?.(),
-            dependencyMap: expect.arrayContaining([expect.toBeMapResult?.()]),
-          }),
-        ]),
-      }
-    );
+    expect(m).toMatchSnapshot<PackageMapping>({
+      depMap: m.depMap.map((x) => ({
+        Name: mapResultMatcher,
+        dependencyMap: new Array(x.dependencyMap.length).fill(mapResultMatcher),
+      })) as unknown as PackageMapping["depMap"],
+    });
   });
 
   it("test mapPackage", () => {
