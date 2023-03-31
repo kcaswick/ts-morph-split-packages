@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test morph test prepareTsMorph simple repo: importDeclarationsFlatText 1`] = `
+Array [
+  "lib\\\\__tests__\\\\complexRepo.test.ts: import { createWriteStream /* , mkdirSync */ } from \\"fs\\";",
+  "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"./test_fixtures\\";",
+  "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { createWriteStream } from \\"fs\\";",
+  "lib\\\\git.ts: import { basename } from \\"path\\";",
+]
+`;
+
+exports[`test morph test prepareTsMorph simple repo: tempRepo.status 1`] = `
+StatusSummary {
+  "ahead": 0,
+  "behind": 0,
+  "conflicted": Array [],
+  "created": Array [],
+  "current": "split/ts-morph-split-packages",
+  "deleted": Array [],
+  "detached": false,
+  "files": Array [],
+  "ignored": undefined,
+  "isClean": [Function],
+  "modified": Array [],
+  "not_added": Array [],
+  "renamed": Array [],
+  "staged": Array [],
+  "tracking": null,
+}
+`;
+
+exports[`test morph test prepareTsMorph simple repo: testFixtureImports 1`] = `
+Array [
+  "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"./test_fixtures\\";",
+]
+`;

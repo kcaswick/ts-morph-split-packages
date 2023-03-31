@@ -1,14 +1,22 @@
-import { createProject, ts } from "@ts-morph/bootstrap";
+import { createProject, Project, ts } from "@ts-morph/bootstrap";
 import { basename } from "path";
 import { ImportDeclaration } from "ts-morph";
 import { getImportDeclarationsForSymbols } from "ts-morph-helpers";
 
 import { PackageMapping } from "./mapping";
 
+/**
+ * Update all imports in the current project based on the provided mapping.
+ *
+ * @returns Updated, but not saved, project
+ * @param mapping Mapping to use to update the imports
+ * @param currentRepo Name of the current repository. This is used to determine if we should update the import to a relative
+ *  path or not. Optional, defaults to the name of the current working directory.
+ */
 export async function prepareTsMorph(
   mapping: PackageMapping,
   currentRepo: string = basename(process.cwd())
-) {
+): Promise<Project> {
   // Read the existing project
   const project = await createProject({
     tsConfigFilePath: "tsconfig.json",
@@ -120,4 +128,6 @@ export async function prepareTsMorph(
       //   console.error(e);
       // }
     });
+
+  return project;
 }
