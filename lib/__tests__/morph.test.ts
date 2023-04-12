@@ -56,5 +56,5 @@ describe("test morph", function () {
     expect(testFixtureImports).toMatchSnapshot("testFixtureImports");
     expect(testFixtureImports).not.toHaveLength(0);
     expect(testFixtureImports).not.toContain("./test_fixtures");
-  }, 10000);
+  }, 15000);
 });

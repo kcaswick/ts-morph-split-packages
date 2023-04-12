@@ -5,7 +5,7 @@ import shell, { mv } from "shelljs";
 import simpleGit, { SimpleGit } from "simple-git";
 import { mkdir, track } from "temp";
 
-import { executeGitMoveForRepos, PackageMapping, prepareGitMove } from "..";
+import { executeGitMoveForRepos, PackageMapping, prepareGitMove, prepareTsMorph } from "..";
 
 // Automatically track and cleanup files at exit
 track();
@@ -18,6 +18,7 @@ export enum ProcessPhase {
   BuildDependencyGraph = "BuildDependencyGraph",
   Map = "Map",
   Move = "Move",
+  Rewrite = "Rewrite",
 }
 
 export interface IBaseProcessPhaseState {
@@ -103,7 +104,7 @@ export async function advanceToPhase(
         InputFileType.DependencyJson
       );
       currentState.currentPhase = ProcessPhase.BuildDependencyGraph;
-      if (endPhase === ProcessPhase.BuildDependencyGraph) break;
+      if (endPhase === currentState.currentPhase) break;
     // fall through to next phase
 
     case ProcessPhase.BuildDependencyGraph:
@@ -111,14 +112,25 @@ export async function advanceToPhase(
         throw new Error("getPackageMap is required to complete the Map state");
       currentState.packageMapping = getPackageMap(currentState.madgeDependencyJsonPath);
       currentState.currentPhase = ProcessPhase.Map;
-      if (endPhase === ProcessPhase.Map) break;
+      if (endPhase === currentState.currentPhase) break;
     // fall through to next phase
 
     case ProcessPhase.Map:
       const moveTasks = prepareGitMove(currentState.packageMapping);
       await executeGitMoveForRepos(currentState.tempRepo, moveTasks, currentState.packageMapping);
-      if (endPhase === ProcessPhase.Move) break;
+      currentState.currentPhase = ProcessPhase.Move;
+      if (endPhase === currentState.currentPhase) break;
     // fall through to next phase
+
+    case ProcessPhase.Move:
+      const modifiedProject = await prepareTsMorph(currentState.packageMapping);
+      // TODO: Save is not defined - figure out how to save and commit the changes
+      // Maybe I need to use @ts-morph not @ts-morph/bootstrap for this to be available?
+      // await modifiedProject.save();
+      currentState.currentPhase = ProcessPhase.Rewrite;
+      if (endPhase === currentState.currentPhase) break;
+    // fall through to next phase
+
   }
 
   return currentState;
