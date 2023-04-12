@@ -152,13 +152,14 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"NewRepo\\": \\"ts-morph-split-packages\\",
           \\"NewPackage\\": \\"N/A\\",
           \\"NewName\\": \\"lib/index.ts\\",
-          \\"Dependency Count\\": 2,
+          \\"Dependency Count\\": 3,
           \\"Package Dependencies\\": [
             \\"new\\"
           ],
           \\"dependencies\\": [
             \\"ts-morph-split-packages:lib/git.ts\\",
-            \\"new:src/mapping.ts\\"
+            \\"new:src/mapping.ts\\",
+            \\"ts-morph-split-packages:lib/morph.ts\\"
           ]
         },
         {

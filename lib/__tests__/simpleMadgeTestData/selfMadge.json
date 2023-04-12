@@ -21,7 +21,8 @@
   ],
   "lib/index.ts": [
     "lib/git.ts",
-    "lib/mapping.ts"
+    "lib/mapping.ts",
+    "lib/morph.ts"
   ],
   "lib/mapping.ts": [],
   "lib/morph.ts": [

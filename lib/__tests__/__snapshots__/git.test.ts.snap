@@ -1,22 +1,5 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`executeGitMoveForRepo test setup successful and matches snapshot 1`] = `
-Map {
-  "test_fixtures" => Array [
-    Array [
-      "lib/__tests__/test_fixtures.ts",
-      "src/__tests__/test_fixtures.ts",
-    ],
-  ],
-  "new" => Array [
-    Array [
-      "lib/mapping.ts",
-      "src/mapping.ts",
-    ],
-  ],
-}
-`;
-
 exports[`executeGitMoveForRepo Execute default plan: results from move to new 1`] = `
 Array [
   Object {
@@ -41,6 +24,23 @@ Array [
     ],
   },
 ]
+`;
+
+exports[`executeGitMoveForRepo test setup successful and matches snapshot 1`] = `
+Map {
+  "test_fixtures" => Array [
+    Array [
+      "lib/__tests__/test_fixtures.ts",
+      "src/__tests__/test_fixtures.ts",
+    ],
+  ],
+  "new" => Array [
+    Array [
+      "lib/mapping.ts",
+      "src/mapping.ts",
+    ],
+  ],
+}
 `;
 
 exports[`executeGitMoveForRepos Complete simple split 1`] = `
