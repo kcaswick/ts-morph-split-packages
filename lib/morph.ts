@@ -16,7 +16,7 @@ import { PackageMapping } from "./mapping";
 export async function prepareTsMorph(
   mapping: PackageMapping,
   currentRepo: string = basename(process.cwd())
-): Promise<Project> {
+): Promise<{ project: Project; modifiedFiles: Set<ts.SourceFile> }> {
   // Read the existing project
   const project = await createProject({
     tsConfigFilePath: "tsconfig.json",
@@ -25,6 +25,7 @@ export async function prepareTsMorph(
   const languageService = project.getLanguageService();
 
   const sourceFiles = project.getSourceFiles();
+  const modifiedFiles = new Set<ts.SourceFile>();
   // Update imports in all programs based on the mapping
   sourceFiles
     .filter((sourceFile) => !sourceFile.fileName?.includes("node_modules"))
@@ -56,15 +57,19 @@ export async function prepareTsMorph(
           const mappedPath = mapping.mapPackage(importPath);
 
           console.debug(
-            `${sourceFile.fileName}:${(node as any)?.getStartLineNumber?.()}:${node.getStart()}: ${node.getText()} => ${
+            `${sourceFile.fileName}:${(
+              node as any
+            )?.getStartLineNumber?.()}:${node.getStart()}: ${node.getText()} => ${
               mappedPath ? node.getText().replace(importPath, mappedPath.Path) : ""
             } (${importPath})`
           );
           if (mappedPath) {
             if (mappedPath.Repo === currentRepo) {
-              project.updateSourceFile(
-                sourceFile.fileName,
-                sourceFile.text.replace(importPath, mappedPath.Path)
+              modifiedFiles.add(
+                project.updateSourceFile(
+                  sourceFile.fileName,
+                  sourceFile.text.replace(importPath, mappedPath.Path)
+                )
               );
             } else {
               (node as any).setModuleSpecifier(mappedPath.Package);
@@ -129,5 +134,5 @@ export async function prepareTsMorph(
       // }
     });
 
-  return project;
+  return { project, modifiedFiles };
 }

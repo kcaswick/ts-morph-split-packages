@@ -1,9 +1,10 @@
 import { ensureDir } from "fs-extra";
 import madge from "madge";
 import path from "path";
-import shell, { mv } from "shelljs";
+import shell, { mv, popd, pushd } from "shelljs";
 import simpleGit, { SimpleGit } from "simple-git";
 import { mkdir, track } from "temp";
+import { Writable } from "ts-toolbelt/out/Object/Writable";
 
 import { executeGitMoveForRepos, PackageMapping, prepareGitMove, prepareTsMorph } from "..";
 
@@ -47,12 +48,17 @@ export interface IMovePhaseState extends noPhase<IMapPhaseState> {
   currentPhase: ProcessPhase.Move;
 }
 
+export interface IRewritePhaseState extends noPhase<IMovePhaseState> {
+  currentPhase: ProcessPhase.Rewrite;
+}
+
 // Interface union of all possible states
 export type IProcessPhaseState =
   | IInitialPhaseState
   | IDependencyGraphPhaseState
   | IMapPhaseState
-  | IMovePhaseState;
+  | IMovePhaseState
+  | IRewritePhaseState;
 
 /* eslint-disable no-case-declarations */
 export async function advanceToPhase(
@@ -75,6 +81,12 @@ export async function advanceToPhase(
   endPhase: ProcessPhase.Move,
   startingState: Readonly<IMapPhaseState>
 ): Promise<IMovePhaseState>;
+// Multiphase rewrite overload
+export async function advanceToPhase(
+  endPhase: ProcessPhase.Rewrite,
+  startingState: Readonly<IInitialPhaseState | IDependencyGraphPhaseState | IMapPhaseState>,
+  getPackageMap: (madgeDependencyJsonPath: string) => PackageMapping
+): Promise<IRewritePhaseState>;
 
 export async function advanceToPhase(
   endPhase: ProcessPhase,
@@ -82,7 +94,7 @@ export async function advanceToPhase(
   getPackageMap?: (madgeDependencyJsonPath: string) => PackageMapping
 ): Promise<IProcessPhaseState> {
   // Shallow clone the starting state so we can mutate it
-  const currentState = Object.assign(
+  const currentState /* : Awaited<ReturnType<typeof advanceToPhase>> */ = Object.assign(
     Object.create(Object.getPrototypeOf(startingState)),
     startingState
   );
@@ -123,14 +135,21 @@ export async function advanceToPhase(
     // fall through to next phase
 
     case ProcessPhase.Move:
-      const modifiedProject = await prepareTsMorph(currentState.packageMapping);
+      pushd(currentState.tempRepoPath);
+      const { project: modifiedProject, modifiedFiles } = await prepareTsMorph(
+        currentState.packageMapping
+      );
+      popd();
       // TODO: Save is not defined - figure out how to save and commit the changes
       // Maybe I need to use @ts-morph not @ts-morph/bootstrap for this to be available?
       // await modifiedProject.save();
+      modifiedFiles.forEach((file) => {
+        modifiedProject.fileSystem.writeFileSync(file.fileName, file.text);
+      });
+      await (<IMovePhaseState>currentState).tempRepo.commit("Rewrite imports", ["--all"]);
       currentState.currentPhase = ProcessPhase.Rewrite;
       if (endPhase === currentState.currentPhase) break;
     // fall through to next phase
-
   }
 
   return currentState;

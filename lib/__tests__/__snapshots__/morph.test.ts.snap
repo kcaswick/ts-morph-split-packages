@@ -1,5 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+
+exports[`test morph save modified simple repo: tempRepo.status before 1`] = `
+StatusSummary {
+  "ahead": 0,
+  "behind": 0,
+  "conflicted": Array [],
+  "created": Array [],
+  "current": "split/ts-morph-split-packages",
+  "deleted": Array [],
+  "detached": false,
+  "files": Array [],
+  "ignored": undefined,
+  "isClean": [Function],
+  "modified": Array [],
+  "not_added": Array [],
+  "renamed": Array [],
+  "staged": Array [],
+  "tracking": null,
+}
+`;
+
 exports[`test morph test prepareTsMorph simple repo: importDeclarationsFlatText 1`] = `
 Array [
   "lib\\\\__tests__\\\\complexRepo.test.ts: import { createWriteStream /* , mkdirSync */ } from \\"fs\\";",
