@@ -1,16 +1,38 @@
-import { ts } from "@ts-morph/bootstrap";
+import { Project, ts } from "@ts-morph/bootstrap";
 import path from "path";
 import { ls, popd, pushd } from "shelljs";
-import simpleGit, { CheckRepoActions } from "simple-git";
+import simpleGit, { CheckRepoActions, SimpleGit } from "simple-git";
 
 import { MapResult, PackageMapping } from "../mapping";
 import * as morph from "../morph";
 import {
   advanceToPhase,
   checkoutTempSimpleRepo,
+  expectImportChanged,
+  getInternalImportsFlat,
+  IMovePhaseState,
+  importNodeToText,
   loadSimpleMadge,
   ProcessPhase,
 } from "./test_fixtures";
+
+async function arrangeRepoAndSnapshot(
+  branch?: string
+): Promise<[string, SimpleGit, IMovePhaseState]> {
+  const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
+  const testState = await advanceToPhase(
+    ProcessPhase.Move,
+    { currentPhase: ProcessPhase.Initial, tempRepoPath, tempRepo },
+    loadSimpleMadge
+  );
+  if (branch) {
+    await tempRepo.checkout(branch);
+  }
+
+  const status = await testState.tempRepo.status();
+  expect(status).toMatchSnapshot("tempRepo.status");
+  return [tempRepoPath, tempRepo, testState];
+}
 
 describe("test morph", function () {
   it("test morph.prepareTsMorph", async function () {
@@ -19,43 +41,50 @@ describe("test morph", function () {
     expect(modifiedProject).toBeDefined();
     console.debug("Start snapshot");
   });
-  test("test prepareTsMorph simple repo", async () => {
-    const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
-    const testState = await advanceToPhase(
-      ProcessPhase.Move,
-      { currentPhase: ProcessPhase.Initial, tempRepoPath, tempRepo },
-      loadSimpleMadge
-    );
-    const status = await testState.tempRepo.status();
-    expect(status).toMatchSnapshot("tempRepo.status");
+  test("prepareTsMorph simple repo main pkg", async () => {
+    // Arrange
+    const [tempRepoPath, tempRepo, testState] = await arrangeRepoAndSnapshot();
     // TODO: Figure out if the right branch is checked out, or if we need to switch
+
+    // Act
     pushd(tempRepoPath);
     const modifiedProject = await morph.prepareTsMorph(testState.packageMapping);
     popd();
     expect(modifiedProject).toBeDefined();
+
+    // Assert
 
     // Make sure it isn't doing:
     //    C:/Users/kcaswick/source/repos/External/ts-morph-split-packages/lib/__tests__/morph.test.ts:…:
     //    import {…} from "./test_fixtures"; =>  ("./test_fixtures")
     // instead:
     //    import {…} from "./test_fixtures"; => ("../../test_fixtures")
-    const importDeclarationsFlat = modifiedProject.project
-      .getSourceFiles()
-      .filter((sourceFile) => !sourceFile.fileName?.includes("node_modules"))
-      .flatMap((sf) => sf.forEachChild((x) => (ts.isImportDeclaration(x) ? [x] : [])))
-      .filter((x) => x !== undefined) as Array<ts.ImportDeclaration>;
+    const importDeclarationsFlat = getInternalImportsFlat(modifiedProject.project);
     const importDeclarationsFlatText = importDeclarationsFlat
-      .map(
-        (node) => `${path.relative(tempRepoPath, node.getSourceFile().fileName)}: ${node.getText()}`
-      )
+      .map(importNodeToText(tempRepoPath))
       .sort();
     expect(importDeclarationsFlatText).toMatchSnapshot("importDeclarationsFlatText");
-    const testFixtureImports = importDeclarationsFlatText.filter((x) =>
-      x.includes("test_fixtures")
+    expectImportChanged(importDeclarationsFlatText, "test_fixtures", '"./test_fixtures');
+  }, 15000);
+  test("prepareTsMorph simple repo test_fixtures pkg", async () => {
+    // Arrange
+    const [tempRepoPath, _tempRepo, testState] = await arrangeRepoAndSnapshot(
+      "split/test_fixtures"
     );
-    expect(testFixtureImports).toMatchSnapshot("testFixtureImports");
-    expect(testFixtureImports).not.toHaveLength(0);
-    expect(testFixtureImports).not.toContain("./test_fixtures");
+
+    // Act
+    pushd(tempRepoPath);
+    const modifiedProject = await morph.prepareTsMorph(testState.packageMapping);
+    popd();
+    expect(modifiedProject).toBeDefined();
+
+    // Assert
+    const importDeclarationsFlat = getInternalImportsFlat(modifiedProject.project);
+    const importDeclarationsFlatText = importDeclarationsFlat
+      .map(importNodeToText(tempRepoPath))
+      .sort();
+    expect(importDeclarationsFlatText).toMatchSnapshot("importDeclarationsFlatText");
+    expectImportChanged(importDeclarationsFlatText, "PackageMapping", "..");
   }, 15000);
   test("save modified simple repo", async () => {
     // Arrange

@@ -1,3 +1,4 @@
+import { Project, ts } from "@ts-morph/bootstrap";
 import { ensureDir } from "fs-extra";
 import madge from "madge";
 import path from "path";
@@ -199,6 +200,26 @@ export function checkoutTempSimpleRepo() {
   return checkoutTemporaryRepo(ourRepo, "72f460b7e4fb2af3fb15b0b6eb84d53a9b9dad98");
 }
 
+/**
+ * This function checks tests that import statements have changed after a refactoring operation.
+ *
+ * @param importDeclarationsFlatText - An array of import statements as plain strings
+ * @param oldName - The old name of the imported item
+ * @param oldPath - The old path of the imported module
+ */
+export function expectImportChanged(
+  importDeclarationsFlatText: string[],
+  oldName: string,
+  oldPath: string
+) {
+  const testFixtureImports = importDeclarationsFlatText.filter((x) => x.includes(oldName));
+  expect(testFixtureImports).toMatchSnapshot(oldName);
+  expect(testFixtureImports).not.toHaveLength(0);
+  testFixtureImports.forEach((s) => {
+    expect(s).not.toMatch(oldPath);
+  });
+}
+
 export async function generateMadgeDependencyJsonForRepo(
   repoPath: string,
   dependencyJsonPath = path.join(repoPath, "/doc/dependency.json")
@@ -213,6 +234,24 @@ export async function generateMadgeDependencyJsonForRepo(
   await ensureDir(path.dirname(dependencyJsonPath));
   shell.echo(dependenciesJson).to(dependencyJsonPath);
   return dependencyJsonPath;
+}
+
+/** Get all import declarations in the project, excluding those in node_modules */
+export const getInternalImportsFlat = (project: Project): ts.ImportDeclaration[] =>
+  project
+    .getSourceFiles()
+    .filter((sourceFile) => !sourceFile.fileName?.includes("node_modules"))
+    .flatMap((sf) => sf.forEachChild((x) => (ts.isImportDeclaration(x) ? [x] : [])))
+    .filter((x) => x !== undefined) as Array<ts.ImportDeclaration>;
+
+
+/** This function takes a TypeScript import node and returns a string
+that represents the source file and the import text. */
+export function importNodeToText(
+  tempRepoPath: string
+): (value: ts.ImportDeclaration, index: number, array: ts.ImportDeclaration[]) => string {
+  return (node) =>
+    `${path.relative(tempRepoPath, node.getSourceFile().fileName)}: ${node.getText()}`;
 }
 
 export function loadSimpleMadge(dependencyJsonPath = simpleMadgeDependenciesPath) {
