@@ -1,12 +1,12 @@
 {
   "OldPatterns": {
     "lib/mapping": {
-      "Path": "src/mapping",
+      "Path": "lib/package/new/mapping",
       "Repo": "new",
       "Package": "new"
     },
     "lib/__tests__/test_": {
-      "Path": "src/__tests__/test_",
+      "Path": "lib/package/test_fixtures/__tests__/test_",
       "Repo": "test_fixtures",
       "Package": "test_fixtures"
     },

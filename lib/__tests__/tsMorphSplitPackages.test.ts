@@ -47,7 +47,7 @@ describe("tsMorphSplitPackages basic tests", () => {
     const m = loadSimpleMadge();
     const result = m.mapPackage("lib/mapping.ts");
     expect(result).toBeDefined();
-    expect(result?.Path).toBe("src/mapping.ts");
+    expect(result?.Path).toBe("lib/package/new/mapping.ts");
     expect(result).toMatchObject({
       Path: "src/mapping.ts",
       Repo: "new",
@@ -64,7 +64,7 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"OldName\\": \\"lib/mapping.ts\\",
           \\"NewRepo\\": \\"new\\",
           \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/mapping.ts\\",
+          \\"NewName\\": \\"lib/package/new/mapping.ts\\",
           \\"Dependency Count\\": 0,
           \\"Package Dependencies\\": [],
           \\"dependencies\\": []
@@ -73,7 +73,7 @@ describe("tsMorphSplitPackages basic tests", () => {
           \\"OldName\\": \\"lib/__tests__/test_fixtures.ts\\",
           \\"NewRepo\\": \\"test_fixtures\\",
           \\"NewPackage\\": \\"test_fixtures\\",
-          \\"NewName\\": \\"src/__tests__/test_fixtures.ts\\",
+          \\"NewName\\": \\"lib/package/test_fixtures/__tests__/test_fixtures.ts\\",
           \\"Dependency Count\\": 0,
           \\"Package Dependencies\\": [],
           \\"dependencies\\": []
@@ -100,9 +100,9 @@ describe("tsMorphSplitPackages basic tests", () => {
             \\"test_fixtures\\"
           ],
           \\"dependencies\\": [
-            \\"test_fixtures:src/__tests__/test_fixtures.ts\\",
+            \\"test_fixtures:lib/package/test_fixtures/__tests__/test_fixtures.ts\\",
             \\"ts-morph-split-packages:lib/git.ts\\",
-            \\"new:src/mapping.ts\\"
+            \\"new:lib/package/new/mapping.ts\\"
           ]
         },
         {
@@ -116,8 +116,8 @@ describe("tsMorphSplitPackages basic tests", () => {
             \\"test_fixtures\\"
           ],
           \\"dependencies\\": [
-            \\"test_fixtures:src/__tests__/test_fixtures.ts\\",
-            \\"new:src/mapping.ts\\",
+            \\"test_fixtures:lib/package/test_fixtures/__tests__/test_fixtures.ts\\",
+            \\"new:lib/package/new/mapping.ts\\",
             \\"ts-morph-split-packages:lib/morph.ts\\"
           ]
         },
@@ -131,7 +131,7 @@ describe("tsMorphSplitPackages basic tests", () => {
             \\"test_fixtures\\"
           ],
           \\"dependencies\\": [
-            \\"test_fixtures:src/__tests__/test_fixtures.ts\\"
+            \\"test_fixtures:lib/package/test_fixtures/__tests__/test_fixtures.ts\\"
           ]
         },
         {
@@ -144,7 +144,7 @@ describe("tsMorphSplitPackages basic tests", () => {
             \\"new\\"
           ],
           \\"dependencies\\": [
-            \\"new:src/mapping.ts\\"
+            \\"new:lib/package/new/mapping.ts\\"
           ]
         },
         {
@@ -158,7 +158,7 @@ describe("tsMorphSplitPackages basic tests", () => {
           ],
           \\"dependencies\\": [
             \\"ts-morph-split-packages:lib/git.ts\\",
-            \\"new:src/mapping.ts\\",
+            \\"new:lib/package/new/mapping.ts\\",
             \\"ts-morph-split-packages:lib/morph.ts\\"
           ]
         },
@@ -172,7 +172,7 @@ describe("tsMorphSplitPackages basic tests", () => {
             \\"new\\"
           ],
           \\"dependencies\\": [
-            \\"new:src/mapping.ts\\"
+            \\"new:lib/package/new/mapping.ts\\"
           ]
         }
       ]"

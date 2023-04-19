@@ -7,12 +7,12 @@ PackageMapping {
     "OldPatterns": Map {
       "lib/mapping" => Object {
         "Package": "new",
-        "Path": "src/mapping",
+        "Path": "lib/package/new/mapping",
         "Repo": "new",
       },
       "lib/__tests__/test_" => Object {
         "Package": "test_fixtures",
-        "Path": "src/__tests__/test_",
+        "Path": "lib/package/test_fixtures/__tests__/test_",
         "Repo": "test_fixtures",
       },
       "lib" => Object {
@@ -73,7 +73,7 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "test_fixtures",
-            "Path": "src/__tests__/test_fixtures.ts",
+            "Path": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
             "Repo": "test_fixtures",
             "toString": [Function],
           },
@@ -99,7 +99,7 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "new",
-            "Path": "src/mapping.ts",
+            "Path": "lib/package/new/mapping.ts",
             "Repo": "new",
             "toString": [Function],
           },
@@ -129,7 +129,7 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "test_fixtures",
-            "Path": "src/__tests__/test_fixtures.ts",
+            "Path": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
             "Repo": "test_fixtures",
             "toString": [Function],
           },
@@ -142,7 +142,7 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "new",
-            "Path": "src/mapping.ts",
+            "Path": "lib/package/new/mapping.ts",
             "Repo": "new",
             "toString": [Function],
           },
@@ -171,7 +171,7 @@ PackageMapping {
         "New": Location {
           "Order": 0,
           "Package": "test_fixtures",
-          "Path": "src/__tests__/test_fixtures.ts",
+          "Path": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
           "Repo": "test_fixtures",
           "toString": [Function],
         },
@@ -201,7 +201,7 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "test_fixtures",
-            "Path": "src/__tests__/test_fixtures.ts",
+            "Path": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
             "Repo": "test_fixtures",
             "toString": [Function],
           },
@@ -231,7 +231,7 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "new",
-            "Path": "src/mapping.ts",
+            "Path": "lib/package/new/mapping.ts",
             "Repo": "new",
             "toString": [Function],
           },
@@ -274,7 +274,7 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "new",
-            "Path": "src/mapping.ts",
+            "Path": "lib/package/new/mapping.ts",
             "Repo": "new",
             "toString": [Function],
           },
@@ -303,7 +303,7 @@ PackageMapping {
         "New": Location {
           "Order": 0,
           "Package": "new",
-          "Path": "src/mapping.ts",
+          "Path": "lib/package/new/mapping.ts",
           "Repo": "new",
           "toString": [Function],
         },
@@ -333,7 +333,7 @@ PackageMapping {
           "New": Location {
             "Order": 0,
             "Package": "new",
-            "Path": "src/mapping.ts",
+            "Path": "lib/package/new/mapping.ts",
             "Repo": "new",
             "toString": [Function],
           },
@@ -381,7 +381,7 @@ PackageMapping {
         "New": Location {
           "Order": 0,
           "Package": "test_fixtures",
-          "Path": "src/__tests__/test_fixtures.ts",
+          "Path": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
           "Repo": "test_fixtures",
           "toString": [Function],
         },
@@ -480,7 +480,7 @@ PackageMapping {
         "New": Location {
           "Order": 0,
           "Package": "new",
-          "Path": "src/mapping.ts",
+          "Path": "lib/package/new/mapping.ts",
           "Repo": "new",
           "toString": [Function],
         },

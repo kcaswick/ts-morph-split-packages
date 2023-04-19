@@ -24,7 +24,7 @@ StatusSummary {
 exports[`test morph test prepareTsMorph simple repo: importDeclarationsFlatText 1`] = `
 Array [
   "lib\\\\__tests__\\\\complexRepo.test.ts: import { createWriteStream /* , mkdirSync */ } from \\"fs\\";",
-  "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"./test_fixtures\\";",
+  "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"test_fixtures\\";",
   "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { createWriteStream } from \\"fs\\";",
   "lib\\\\git.ts: import { basename } from \\"path\\";",
 ]
@@ -52,6 +52,6 @@ StatusSummary {
 
 exports[`test morph test prepareTsMorph simple repo: testFixtureImports 1`] = `
 Array [
-  "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"./test_fixtures\\";",
+  "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"test_fixtures\\";",
 ]
 `;
