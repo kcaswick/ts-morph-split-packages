@@ -55,16 +55,21 @@ export async function prepareTsMorph(
         if (ts.isImportDeclaration(node)) {
           const importPath = node.moduleSpecifier.getText();
           const mappedPath = mapping.mapPackage(importPath);
+          const isSameRepo = mappedPath && mappedPath.Repo === currentRepo;
 
           console.debug(
             `${sourceFile.fileName}:${(
               node as any
-            )?.getStartLineNumber?.()}:${node.getStart()}: ${node.getText()} => ${
-              mappedPath ? node.getText().replace(importPath, mappedPath.Path) : ""
-            } (${importPath})`
+            )?.getStartLineNumber?.()}:${node.getStart()}: ${node.getText()} => "${
+              mappedPath
+                ? isSameRepo
+                  ? node.getText().replace(importPath, mappedPath.Path)
+                  : mappedPath.Package
+                : "no change"
+            }" (${importPath})`
           );
           if (mappedPath) {
-            if (mappedPath.Repo === currentRepo) {
+            if (isSameRepo) {
               modifiedFiles.add(
                 project.updateSourceFile(
                   sourceFile.fileName,
