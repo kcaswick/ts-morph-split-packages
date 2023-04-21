@@ -1,10 +1,10 @@
-import { Project, ts } from "@ts-morph/bootstrap";
 import { ensureDir } from "fs-extra";
 import madge from "madge";
 import path from "path";
 import shell, { mv, popd, pushd } from "shelljs";
 import simpleGit, { SimpleGit } from "simple-git";
 import { mkdir, track } from "temp";
+import { ImportDeclaration, Project, ts } from "ts-morph";
 import { Writable } from "ts-toolbelt/out/Object/Writable";
 
 import { executeGitMoveForRepos, PackageMapping, prepareGitMove, prepareTsMorph } from "..";
@@ -141,12 +141,7 @@ export async function advanceToPhase(
         currentState.packageMapping
       );
       popd();
-      // TODO: Save is not defined - figure out how to save and commit the changes
-      // Maybe I need to use @ts-morph not @ts-morph/bootstrap for this to be available?
-      // await modifiedProject.save();
-      modifiedFiles.forEach((file) => {
-        modifiedProject.fileSystem.writeFileSync(file.fileName, file.text);
-      });
+      await modifiedProject.save();
       await (<IMovePhaseState>currentState).tempRepo.commit("Rewrite imports", ["--all"]);
       currentState.currentPhase = ProcessPhase.Rewrite;
       if (endPhase === currentState.currentPhase) break;
@@ -237,21 +232,24 @@ export async function generateMadgeDependencyJsonForRepo(
 }
 
 /** Get all import declarations in the project, excluding those in node_modules */
-export const getInternalImportsFlat = (project: Project): ts.ImportDeclaration[] =>
+export const getInternalImportsFlat = (project: Project): ImportDeclaration[] =>
   project
     .getSourceFiles()
-    .filter((sourceFile) => !sourceFile.fileName?.includes("node_modules"))
-    .flatMap((sf) => sf.forEachChild((x) => (ts.isImportDeclaration(x) ? [x] : [])))
-    .filter((x) => x !== undefined) as Array<ts.ImportDeclaration>;
-
+    .filter((sourceFile) => !sourceFile.getFilePath()?.includes("node_modules"))
+    .flatMap((sf) => sf.getImportDeclarations())
+    .filter(
+      (x) =>
+        x !== undefined &&
+        !x.getModuleSpecifierSourceFile()?.getFilePath()?.includes("node_modules")
+    ) as Array<ImportDeclaration>;
 
 /** This function takes a TypeScript import node and returns a string
 that represents the source file and the import text. */
 export function importNodeToText(
   tempRepoPath: string
-): (value: ts.ImportDeclaration, index: number, array: ts.ImportDeclaration[]) => string {
+): (value: ImportDeclaration, index: number, array: ImportDeclaration[]) => string {
   return (node) =>
-    `${path.relative(tempRepoPath, node.getSourceFile().fileName)}: ${node.getText()}`;
+    `${path.relative(tempRepoPath, node.getSourceFile().getFilePath())}: ${node.getText()}`;
 }
 
 export function loadSimpleMadge(dependencyJsonPath = simpleMadgeDependenciesPath) {

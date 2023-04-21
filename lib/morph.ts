@@ -1,6 +1,5 @@
-import { createProject, Project, ts } from "@ts-morph/bootstrap";
 import { basename } from "path";
-import { ImportDeclaration } from "ts-morph";
+import { ImportDeclaration, Project, SourceFile, ts } from "ts-morph";
 import { getImportDeclarationsForSymbols } from "ts-morph-helpers";
 
 import { PackageMapping } from "./mapping";
@@ -13,22 +12,22 @@ import { PackageMapping } from "./mapping";
  * @param currentRepo Name of the current repository. This is used to determine if we should update the import to a relative
  *  path or not. Optional, defaults to the name of the current working directory.
  */
-export async function prepareTsMorph(
+export /* async */ function prepareTsMorph(
   mapping: PackageMapping,
   currentRepo: string = basename(process.cwd())
-): Promise<{ project: Project; modifiedFiles: Set<ts.SourceFile> }> {
+): Promise<{ project: Project; modifiedFiles: Set<SourceFile> }> {
   // Read the existing project
-  const project = await createProject({
+  const project = new Project({
     tsConfigFilePath: "tsconfig.json",
   });
 
   const languageService = project.getLanguageService();
 
   const sourceFiles = project.getSourceFiles();
-  const modifiedFiles = new Set<ts.SourceFile>();
+  const modifiedFiles = new Set<SourceFile>();
   // Update imports in all programs based on the mapping
   sourceFiles
-    .filter((sourceFile) => !sourceFile.fileName?.includes("node_modules"))
+    .filter((sourceFile) => !sourceFile.getFilePath()?.includes("node_modules"))
     .forEach((sourceFile) => {
       //   try {
       //     getImportDeclarationsForSymbols(
@@ -50,59 +49,71 @@ export async function prepareTsMorph(
       //   console.error(e);
       // }
 
-      // try {
-      sourceFile.forEachChild((node) => {
-        if (ts.isImportDeclaration(node)) {
-          const importPath = node.moduleSpecifier.getText();
+      // // try {
+      // sourceFile.forEachChild((node) => {
+      //   if (ts.isImportDeclaration(node)) {
+      //     const importPath = node.moduleSpecifier.getText();
+      //     const mappedPath = mapping.mapPackage(importPath);
+      //     const isSameRepo = mappedPath && mappedPath.Repo === currentRepo;
+
+      //     console.debug(
+      //       `${sourceFile.fileName}:${(
+      //         node as any
+      //       )?.getStartLineNumber?.()}:${node.getStart()}: ${node.getText()} => "${
+      //         mappedPath
+      //           ? isSameRepo
+      //             ? node.getText().replace(importPath, mappedPath.Path)
+      //             : mappedPath.Package
+      //           : "no change"
+      //       }" (${importPath})`
+      //     );
+      //     if (mappedPath) {
+      //       if (isSameRepo) {
+      //         modifiedFiles.add(
+      //           project.updateSourceFile(
+      //             sourceFile.fileName,
+      //             sourceFile.text.replace(importPath, mappedPath.Path)
+      //           )
+      //         );
+      //       } else {
+      //         (node as any).setModuleSpecifier(mappedPath.Package);
+      //       }
+      //     }
+      //   }
+      // });
+      // // } catch (e) {
+      // //   console.error(e);
+      // // }
+
+      try {
+        sourceFile.getImportDeclarations().forEach((importDeclaration: ImportDeclaration) => {
+          const importPath =
+            importDeclaration.getModuleSpecifierSourceFile()?.getFilePath() ??
+            importDeclaration.getModuleSpecifierValue();
           const mappedPath = mapping.mapPackage(importPath);
           const isSameRepo = mappedPath && mappedPath.Repo === currentRepo;
 
           console.debug(
-            `${sourceFile.fileName}:${(
-              node as any
-            )?.getStartLineNumber?.()}:${node.getStart()}: ${node.getText()} => "${
+            `${sourceFile.getFilePath()}:${importDeclaration?.getStartLineNumber?.()}:${importDeclaration.getStart()}: ${importDeclaration.getText()} => "${
               mappedPath
                 ? isSameRepo
-                  ? node.getText().replace(importPath, mappedPath.Path)
+                  ? importDeclaration.getText().replace(importPath, mappedPath.Path)
                   : mappedPath.Package
                 : "no change"
             }" (${importPath})`
           );
           if (mappedPath) {
+            modifiedFiles.add(sourceFile);
             if (isSameRepo) {
-              modifiedFiles.add(
-                project.updateSourceFile(
-                  sourceFile.fileName,
-                  sourceFile.text.replace(importPath, mappedPath.Path)
-                )
-              );
+              importDeclaration.setModuleSpecifier(mappedPath.Path);
             } else {
-              (node as any).setModuleSpecifier(mappedPath.Package);
+              importDeclaration.setModuleSpecifier(mappedPath.Package);
             }
           }
-        }
-      });
-      // } catch (e) {
-      //   console.error(e);
-      // }
-
-      // try {
-      //   (sourceFile as any)
-      //     .getImportDeclarations()
-      //     .forEach((importDeclaration: ImportDeclaration) => {
-      //       const importPath = importDeclaration.getModuleSpecifierValue();
-      //       const mappedPath = mapping.mapPackage(importPath);
-      //       if (mappedPath) {
-      //         if (mappedPath.Repo === currentRepo) {
-      //           importDeclaration.setModuleSpecifier(mappedPath.Path);
-      //         } else {
-      //           importDeclaration.setModuleSpecifier(mappedPath.Package);
-      //         }
-      //       }
-      //     });
-      // } catch (e) {
-      //   console.error(e);
-      // }
+        });
+      } catch (e) {
+        console.error(e);
+      }
 
       // try {
       //   sourceFile.statements.forEach((statement) => {
@@ -139,5 +150,5 @@ export async function prepareTsMorph(
       // }
     });
 
-  return { project, modifiedFiles };
+  return Promise.resolve({ project, modifiedFiles });
 }

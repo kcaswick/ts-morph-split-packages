@@ -1,4 +1,3 @@
-import { Project, ts } from "@ts-morph/bootstrap";
 import path from "path";
 import { ls, popd, pushd } from "shelljs";
 import simpleGit, { CheckRepoActions, SimpleGit } from "simple-git";
@@ -134,9 +133,7 @@ describe("test morph", function () {
           }
 
           // Act
-          modifiedFilesSet.forEach((file) => {
-            modifiedProject.fileSystem.writeFileSync(file.fileName, file.text);
-          });
+          await modifiedProject.save();
 
           // Assert
           const status = await testState.tempRepo.status();
@@ -145,7 +142,7 @@ describe("test morph", function () {
           await testState.tempRepo.commit("Rewrite imports", ["--all"]);
 
           // Get the list of file names that were modified
-          const modifiedFileNames = Array.from(modifiedFilesSet.values()).map((x) => x.fileName);
+          const modifiedFileNames = Array.from(modifiedFilesSet.values()).map((x) => x.getFilePath());
 
           // If and only if a file is in the list, it should be modified
           expect(status.modified.sort()).toContainEqual(modifiedFileNames.sort());
