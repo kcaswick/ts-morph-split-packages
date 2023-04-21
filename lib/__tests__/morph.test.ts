@@ -9,7 +9,7 @@ import {
   checkoutTempSimpleRepo,
   expectImportChanged,
   getInternalImportsFlat,
-  IMovePhaseState,
+  IMapPhaseState,
   importNodeToText,
   loadSimpleMadge,
   ProcessPhase,
@@ -17,15 +17,17 @@ import {
 
 async function arrangeRepoAndSnapshot(
   branch?: string
-): Promise<[string, SimpleGit, IMovePhaseState]> {
+): Promise<[string, SimpleGit, IMapPhaseState]> {
   const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
   const testState = await advanceToPhase(
-    ProcessPhase.Move,
+    ProcessPhase.Map,
     { currentPhase: ProcessPhase.Initial, tempRepoPath, tempRepo },
     loadSimpleMadge
   );
   if (branch) {
     await tempRepo.checkout(branch);
+  } else {
+    await tempRepo.checkoutLocalBranch("test_branch");
   }
 
   const status = await testState.tempRepo.status();
@@ -40,7 +42,7 @@ describe("test morph", function () {
     expect(modifiedProject).toBeDefined();
     console.debug("Start snapshot");
   });
-  test("prepareTsMorph simple repo main pkg", async () => {
+  test("prepareTsMorph simple repo", async () => {
     // Arrange
     const [tempRepoPath, tempRepo, testState] = await arrangeRepoAndSnapshot();
     // TODO: Figure out if the right branch is checked out, or if we need to switch
@@ -89,7 +91,7 @@ describe("test morph", function () {
     // Arrange
     const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
     const testState = await advanceToPhase(
-      ProcessPhase.Move,
+      ProcessPhase.Map,
       { currentPhase: ProcessPhase.Initial, tempRepoPath, tempRepo },
       loadSimpleMadge
     );

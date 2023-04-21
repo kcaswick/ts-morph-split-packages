@@ -35,12 +35,12 @@ export interface IInitialPhaseState extends IBaseProcessPhaseState {
 
 type noPhase<T> = Omit<T, "currentPhase">;
 
-interface IDependencyGraphPhaseState extends noPhase<IInitialPhaseState> {
+export interface IDependencyGraphPhaseState extends noPhase<IInitialPhaseState> {
   currentPhase: ProcessPhase.BuildDependencyGraph;
   madgeDependencyJsonPath: string;
 }
 
-interface IMapPhaseState extends noPhase<IDependencyGraphPhaseState> {
+export interface IMapPhaseState extends noPhase<IDependencyGraphPhaseState> {
   currentPhase: ProcessPhase.Map;
   packageMapping: PackageMapping;
 }
@@ -241,7 +241,7 @@ export const getInternalImportsFlat = (project: Project): ImportDeclaration[] =>
       (x) =>
         x !== undefined &&
         !x.getModuleSpecifierSourceFile()?.getFilePath()?.includes("node_modules")
-    ) as Array<ImportDeclaration>;
+    );
 
 /** This function takes a TypeScript import node and returns a string
 that represents the source file and the import text. */

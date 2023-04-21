@@ -1,21 +1,33 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test morph prepareTsMorph simple repo main pkg: importDeclarationsFlatText 1`] = `
+exports[`test morph prepareTsMorph simple repo: importDeclarationsFlatText 1`] = `
 Array [
+  "lib\\\\__tests__\\\\complexRepo.test.ts: import shell from \\"shelljs\\";",
+  "lib\\\\__tests__\\\\complexRepo.test.ts: import { PackageMapping } from \\"../../lib\\";",
   "lib\\\\__tests__\\\\complexRepo.test.ts: import { createWriteStream /* , mkdirSync */ } from \\"fs\\";",
+  "lib\\\\__tests__\\\\complexRepo.test.ts: import { promisify } from \\"util\\";",
+  "lib\\\\__tests__\\\\git.test.ts: import * as sut from \\"../git\\";",
   "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"test_fixtures\\";",
+  "lib\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"../../lib\\";",
+  "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import madge from \\"madge\\";",
   "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { createWriteStream } from \\"fs\\";",
+  "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { loadSimpleMadge, simpleMadgeDependenciesPath } from \\"test_fixtures\\";",
+  "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { promisify } from \\"util\\";",
+  "lib\\\\git.ts: import { PackageMapping } from \\"new\\";",
+  "lib\\\\git.ts: import { SimpleGit } from \\"simple-git\\";",
   "lib\\\\git.ts: import { basename } from \\"path\\";",
+  "lib\\\\mapping.ts: import * as fs from \\"fs-extra\\";",
+  "lib\\\\mapping.ts: import { ICruiseResult } from \\"dependency-cruiser\\";",
 ]
 `;
 
-exports[`test morph prepareTsMorph simple repo main pkg: tempRepo.status 1`] = `
+exports[`test morph prepareTsMorph simple repo: tempRepo.status 1`] = `
 StatusSummary {
   "ahead": 0,
   "behind": 0,
   "conflicted": Array [],
   "created": Array [],
-  "current": "split/ts-morph-split-packages",
+  "current": "test_branch",
   "deleted": Array [],
   "detached": false,
   "files": Array [],
@@ -29,9 +41,11 @@ StatusSummary {
 }
 `;
 
-exports[`test morph prepareTsMorph simple repo main pkg: test_fixtures 1`] = `
+exports[`test morph prepareTsMorph simple repo: test_fixtures 1`] = `
 Array [
   "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"test_fixtures\\";",
+  "lib\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"../../lib\\";",
+  "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { loadSimpleMadge, simpleMadgeDependenciesPath } from \\"test_fixtures\\";",
 ]
 `;
 
@@ -53,7 +67,7 @@ StatusSummary {
   "behind": 0,
   "conflicted": Array [],
   "created": Array [],
-  "current": "split/test_fixtures",
+  "current": "test_branch",
   "deleted": Array [],
   "detached": false,
   "files": Array [],
