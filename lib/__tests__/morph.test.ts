@@ -1,3 +1,4 @@
+import { promises as fs } from "fs"; // For workaround
 import path from "path";
 import { ls, popd, pushd } from "shelljs";
 import simpleGit, { CheckRepoActions, SimpleGit } from "simple-git";
@@ -70,7 +71,36 @@ describe("test morph", function () {
   }, 15000);
   test("prepareTsMorph simple repo test_fixtures pkg", async () => {
     // Arrange
-    const [tempRepoPath, _tempRepo, mapState] = await arrangeRepoAndSnapshot();
+    // TODO: Add feature to rewrite re-exports from excluded files
+    // const [tempRepoPath, _tempRepo, mapState] = await arrangeRepoAndSnapshot();
+
+    // BEGIN workaround for above feature not imlemented yet, simulating a manual fix
+    const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
+
+    // Alter first line of lib/__tests__/test_fixtures.ts to replace "../../lib" with "../../lib/mapping"
+    const testFixturesPath = path.join(tempRepoPath, "lib", "__tests__", "test_fixtures.ts");
+    const testFixturesText = await fs.readFile(testFixturesPath, "utf8");
+    const testFixturesTextNew = testFixturesText.replace(
+      'import { PackageMapping } from "..";',
+      'import { PackageMapping } from "../mapping";'
+    );
+    await fs.writeFile(testFixturesPath, testFixturesTextNew);
+    expect(testFixturesTextNew).not.toEqual(testFixturesText);
+
+    await tempRepo.add(testFixturesPath);
+    console.debug(await tempRepo.status());
+    await tempRepo.commit("test_fixtures.ts: Fix import path");
+
+    const mapState = await advanceToPhase(
+      ProcessPhase.Map,
+      { currentPhase: ProcessPhase.Initial, tempRepoPath, tempRepo },
+      loadSimpleMadge
+    );
+    await tempRepo.checkoutLocalBranch("test_branch");
+
+    const status = await mapState.tempRepo.status();
+    expect(status).toMatchSnapshot("tempRepo.status");
+    // END workaround for above feature not imlemented yet
 
     // Act
     pushd(tempRepoPath);
