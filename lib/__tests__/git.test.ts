@@ -4,6 +4,7 @@
  *
  */
 import { existsSync } from "fs";
+import { writeFile } from "fs/promises";
 import { join } from "path";
 import simpleGit, { CheckRepoActions } from "simple-git";
 import temp from "temp";
@@ -133,6 +134,41 @@ describe("executeGitMoveForRepos", () => {
     expect(existsSync(join(tempRepoPath, "lib/index.ts"))).toBeTruthy();
     expect(existsSync(join(tempRepoPath, "lib/mapping.ts"))).toBeFalsy();
     expect(existsSync(join(tempRepoPath, "lib/__tests__/test_fixtures.ts"))).toBeFalsy();
+  }, 15000);
+  it("Respect .gitignore", async () => {
+    const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
+
+    // Simulate having a .ts file generated from another file and hence ignored
+    const baseFilePath = join(tempRepoPath, "lib/git.scss");
+    await writeFile(
+      baseFilePath,
+      `.callout {
+      max-width: 90%;
+      padding: 20px 24px;
+    }`
+    );
+
+    await tempRepo.add(baseFilePath);
+    console.debug(await tempRepo.status());
+    await tempRepo.commit("Add file used by ignored file");
+
+    const ignoredFilePath = join(tempRepoPath, "lib/git.scss.ts");
+    await writeFile(
+      ignoredFilePath,
+      `require("lib/git.scss");
+    const styles = {
+      callout: 'callout_7bca76c6'
+    };
+    export default styles;`
+    );
+
+    const planPromise = buildPlan(tempRepoPath);
+    const { m, plan } = await planPromise;
+    const results = expect(sut.executeGitMoveForRepos(tempRepo, plan, m)).resolves;
+
+    await results.toMatchSnapshot("results from executeGitMoveForRepos");
+
+    expect(existsSync(join(tempRepoPath, "lib/git.scss.ts"))).toBeTruthy();
   }, 15000);
 });
 describe("throwIfRepoNotReady", () => {

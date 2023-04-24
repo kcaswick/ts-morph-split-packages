@@ -81,6 +81,27 @@ Array [
 ]
 `;
 
+exports[`executeGitMoveForRepos Respect .gitignore: results from executeGitMoveForRepos 1`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      },
+    ],
+  },
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "lib/package/new/mapping.ts",
+      },
+    ],
+  },
+]
+`;
+
 exports[`prepareGitMove Should run and match the snapshot 1`] = `
 Map {
   "test_fixtures" => Array [
