@@ -22,6 +22,7 @@
   ],
   "scripts": {
     "build": "tsc -p ./ && npm run rollup",
+    "clean": "shx rm -rf dist temp",
     "pretest": "eslint .",
     "prepack": "zx -e \"let shell = require(`shelljs`); shell.mv(`package*.json`, `temp/`); shell.cp(`temp/package*.json`, `.`); require(`nerdbank-gitversioning`).setPackageVersion();\"",
     "postpack": "zx -e \"let shell = require(`shelljs`); shell.mv(`temp/package*.json`, `.`);\"",
@@ -69,6 +70,7 @@
     "ts-morph-helpers": "^0.6.3",
     "ts-toolbelt": "^9.6.0",
     "typescript": "~4.5.5",
+    "shx": "^0.3.4",
     "zx": "^7.1.1"
   },
   "optionalDependencies": {
