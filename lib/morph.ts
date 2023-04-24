@@ -1,8 +1,9 @@
-import { basename } from "path";
-import { ExportDeclaration, ImportDeclaration, Project, SourceFile, ts } from "ts-morph";
+import { FileUtils } from "@ts-morph/common";
+import { basename, dirname, relative } from "path";
+import { Project, SourceFile, ts } from "ts-morph";
 import { getImportDeclarationsForSymbols } from "ts-morph-helpers";
 
-import { PackageMapping } from "./mapping";
+import { ILocation, PackageMapping } from "./mapping";
 
 /**
  * Update all imports in the current project based on the provided mapping.
@@ -111,7 +112,7 @@ export /* async */ function prepareTsMorph(
             mappedPath && (mappedPath.Repo === mappedSource?.Repo || mappedPath.Package === "N/A");
           const newImport =
             mappedPath && isSameRepo
-              ? sourceFile.getRelativePathAsModuleSpecifierTo(mappedPath.Path)
+              ? sourceFileRelativeMappedPath(mappedSource, sourceFile, mappedPath)
               : mappedPath?.Package ?? "";
 
           const { line, column } =
@@ -131,14 +132,7 @@ export /* async */ function prepareTsMorph(
           );
           if (mappedPath && importValue !== newImport) {
             modifiedFiles.add(sourceFile);
-            if (isSameRepo) {
-              declaration.setModuleSpecifier(
-                // TODO: This should be relative to the sourceFile's mapped path, but we can't calculate that without a root path
-                newImport
-              );
-            } else {
-              declaration.setModuleSpecifier(newImport);
-            }
+            declaration.setModuleSpecifier(newImport);
           }
         });
       } catch (e) {
@@ -182,3 +176,29 @@ export /* async */ function prepareTsMorph(
 
   return Promise.resolve({ project, modifiedFiles });
 }
+
+/** This function returns a relative path from the source file to the mapped path.
+The mapped source path is used to resolve the relative path. If the mapped source path is not available, we use the current source file.
+If the mapped source path is not available, we use the current source file. If there is no mapped source path, we use the current source file.
+*/
+function sourceFileRelativeMappedPath(
+  mappedSource: ILocation | undefined,
+  sourceFile: SourceFile,
+  mappedPath: ILocation
+): string {
+  return mappedSource === undefined
+    ? sourceFile.getRelativePathAsModuleSpecifierTo(mappedPath.Path)
+    : sourceFile
+        .getDirectory()
+        .getDirectory(dirname(mappedSource.Path))
+        ?.getRelativePathAsModuleSpecifierTo(mappedPath.Path) ??
+        // If getRelativePathAsModuleSpecifierTo is not available, we make an effort but don't handle all cases
+        FileUtils.standardizeSlashes(
+          relative(
+            dirname(mappedSource.Path),
+            mappedPath.Path.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "")
+          )
+        ).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+}
+
+export const __forTesting__ = { sourceFileRelativeMappedPath };

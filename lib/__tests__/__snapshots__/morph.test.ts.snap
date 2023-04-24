@@ -40,7 +40,7 @@ Array [
   "lib\\\\__tests__\\\\complexRepo.test.ts: import { promisify } from \\"util\\";",
   "lib\\\\__tests__\\\\git.test.ts: import * as sut from \\"../git\\";",
   "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"test_fixtures\\";",
-  "lib\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"../../lib\\";",
+  "lib\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"../../..\\";",
   "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import madge from \\"madge\\";",
   "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { createWriteStream } from \\"fs\\";",
   "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { loadSimpleMadge, simpleMadgeDependenciesPath } from \\"test_fixtures\\";",
@@ -76,8 +76,20 @@ StatusSummary {
 exports[`test morph prepareTsMorph simple repo: test_fixtures 1`] = `
 Array [
   "lib\\\\__tests__\\\\git.test.ts: import { loadSimpleMadge } from \\"test_fixtures\\";",
-  "lib\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"../../lib\\";",
+  "lib\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"../../..\\";",
   "lib\\\\__tests__\\\\tsMorphSplitPackages.test.ts: import { loadSimpleMadge, simpleMadgeDependenciesPath } from \\"test_fixtures\\";",
+]
+`;
+
+exports[`test morph save modified simple repo: PackageMapping 1`] = `
+Array [
+  "lib\\\\package\\\\test_fixtures\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"new\\";",
+]
+`;
+
+exports[`test morph save modified simple repo: importDeclarationsFlatText 1`] = `
+Array [
+  "lib\\\\package\\\\test_fixtures\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"new\\";",
 ]
 `;
 

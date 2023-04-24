@@ -2,9 +2,9 @@ import { promises as fs } from "fs"; // For workaround
 import path from "path";
 import { ls, popd, pushd } from "shelljs";
 import simpleGit, { CheckRepoActions, SimpleGit } from "simple-git";
-import { Project } from "ts-morph";
+import { Directory, Project, SourceFile } from "ts-morph";
 
-import { MapResult, PackageMapping } from "../mapping";
+import { ILocation, MapResult, PackageMapping } from "../mapping";
 import * as morph from "../morph";
 import {
   advanceToPhase,
@@ -35,6 +35,12 @@ async function arrangeRepoAndSnapshot(
   const status = await testState.tempRepo.status();
   expect(status).toMatchSnapshot("tempRepo.status");
   return [tempRepoPath, tempRepo, testState];
+}
+
+function arrangeSourceFile(fileContent: string, filePath?: string): SourceFile {
+  const project = new Project({ useInMemoryFileSystem: true });
+  const sourceFile = project.createSourceFile(filePath || "temp.ts", fileContent);
+  return sourceFile;
 }
 
 describe("test morph", function () {
@@ -74,7 +80,7 @@ describe("test morph", function () {
     // TODO: Add feature to rewrite re-exports from excluded files
     // const [tempRepoPath, _tempRepo, mapState] = await arrangeRepoAndSnapshot();
 
-    // BEGIN workaround for above feature not imlemented yet, simulating a manual fix
+    // BEGIN workaround for above feature not implemented yet, simulating a manual fix
     const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
 
     // Alter first line of lib/__tests__/test_fixtures.ts to replace "../../lib" with "../../lib/mapping"
@@ -189,4 +195,138 @@ describe("test morph", function () {
       popd();
     }
   }, 15000);
+});
+describe("Test sourceFileRelativeMappedPath", () => {
+  // Helper function to create a mocked source file
+  function createMockSourceFile(): SourceFile {
+    const mockSourceFile: Partial<SourceFile> = {
+      getRelativePathAsModuleSpecifierTo: jest.fn(),
+      getDirectory: jest.fn(
+        () =>
+          ({
+            getDirectory: jest.fn<Directory, []>(),
+          } as unknown as Directory)
+      ),
+    };
+    return mockSourceFile as SourceFile;
+  }
+
+  type TRelPathData = {
+    sourceContents?: string;
+    sourceOldPath?: string;
+    sourceMappedPath?: string;
+    targetMappedPath: string;
+    expectedValue: string;
+  };
+  const dataset: TRelPathData[] = [
+    {
+      // Test reference to file in parent dir using unmapped SourceFile
+      sourceContents: 'import * as sut from "../git";',
+      sourceOldPath: "C:\\tmp\\repo123\\lib\\__tests__\\git.test.ts",
+      sourceMappedPath: undefined,
+      targetMappedPath: "C:\\tmp\\repo123\\lib\\git.ts",
+      expectedValue: "../git",
+    },
+    {
+      // Test reference to file in parent dir using SourceFile
+      sourceContents: 'import * as sut from "../git";',
+      sourceOldPath: "/tmp/repo123/lib/__tests__/git.test.ts",
+      sourceMappedPath: "/tmp/repo123/lib/package/base/__tests__/git.test.ts",
+      targetMappedPath: "/tmp/repo123/lib/package/base/git.ts",
+      expectedValue: "../git",
+    },
+    {
+      // Test reference to file in parent dir using unmapped SourceFile
+      sourceContents: 'import * as sut from "../git";',
+      sourceOldPath: "C:\\tmp\\repo123\\lib\\__tests__\\git.test.ts",
+      targetMappedPath: "C:\\tmp\\repo123\\lib\\git.ts",
+      expectedValue: "../git",
+    },
+    {
+      // Test reference to file in parent dir
+      sourceMappedPath: "C:\\tmp\\repo123\\lib\\__tests__\\git.test.ts",
+      targetMappedPath: "C:\\tmp\\repo123\\lib\\git.ts",
+      expectedValue: "../git",
+    },
+    {
+      // Test mixed slashes
+      sourceMappedPath: "C:\\tmp\\repo123\\lib\\__tests__\\git.test.ts",
+      targetMappedPath: "/tmp/repo123/lib/git.ts",
+      expectedValue: "../git",
+    },
+    {
+      // Test reference to entire parent dir using unmapped SourceFile
+      sourceContents: 'import { PackageMapping } from "..";',
+      sourceOldPath: "/tmp/repo123/lib/__tests__/complexRepo.test.ts",
+      targetMappedPath: "/tmp/repo123/lib/index.ts",
+      expectedValue: "../../lib", // "..", is simpler, not sure why it is taking the long route, but that still is valid
+    },
+    {
+      // Test reference to entire parent dir
+      sourceMappedPath: "/tmp/repo123/lib/__tests__/complexRepo.test.ts",
+      targetMappedPath: "/tmp/repo123/lib/index.ts",
+      expectedValue: "..",
+    },
+    {
+      // Test mixed slashes reference to entire parent dir
+      sourceMappedPath: "C:\\tmp\\repo123\\lib\\__tests__\\test_fixtures.ts",
+      targetMappedPath: "/tmp/repo123/lib/index.ts",
+      expectedValue: "..",
+    },
+    {
+      // (repro test failure) with reference to entire parent dir that is in package "N/A" using unmapped SourceFile
+      sourceContents: 'import { PackageMapping } from "..";',
+      sourceOldPath: "C:\\tmp\\repo123\\lib\\__tests__\\test_fixtures.ts",
+      targetMappedPath: "/tmp/repo123/lib/index.ts",
+      expectedValue: "../../lib", // "..", is simpler, not sure why it is taking the long route, but that still is valid
+    },
+    {
+      // (repro test failure) with reference to entire parent dir that is in package "N/A" using mapped SourceFile
+      sourceContents: 'import { PackageMapping } from "..";',
+      sourceOldPath: "C:\\tmp\\repo123\\lib\\__tests__\\test_fixtures.ts",
+      sourceMappedPath: "/tmp/repo123/lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      targetMappedPath: "/tmp/repo123/lib/index.ts",
+      expectedValue: "../../..",
+    },
+    {
+      // (repro test failure) with reference to entire parent dir that is in package "N/A" without SourceFile
+      sourceMappedPath: "/tmp/repo123/lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      targetMappedPath: "/tmp/repo123/lib/index.ts",
+      expectedValue: "../../..",
+    },
+  ];
+  it.each(dataset)(
+    "$sourceOldPath,$sourceMappedPath,$targetMappedPath>$expectedValue",
+    function ({
+      sourceContents,
+      sourceOldPath,
+      sourceMappedPath,
+      targetMappedPath,
+      expectedValue,
+    }: TRelPathData) {
+      const sourceFile =
+        sourceContents === undefined
+          ? createMockSourceFile()
+          : arrangeSourceFile(sourceContents, sourceOldPath);
+      const mappedSource: ILocation | undefined =
+        sourceMappedPath === undefined
+          ? undefined
+          : {
+              Path: sourceMappedPath,
+              Repo: "",
+              Package: "",
+            };
+      const mappedPath: ILocation = {
+        Path: targetMappedPath,
+        Repo: "",
+        Package: "",
+      };
+      const res = morph.__forTesting__.sourceFileRelativeMappedPath(
+        mappedSource,
+        sourceFile,
+        mappedPath
+      );
+      expect(res).toBe(expectedValue);
+    }
+  );
 });
