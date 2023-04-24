@@ -153,8 +153,10 @@ async function removeFilesNotInTargetRepo(
   const filesToRemove = mapping.depMap
     .filter((x) => x.Name.isMapped() && x.Name.New.Repo !== targetRepo)
     .map((x) => x.Name.OldName);
-  console.debug(`Files to remove: ${filesToRemove.join(",")}`);
-  await currentRepo.rm(filesToRemove);
+  const ignored = await currentRepo.checkIgnore(filesToRemove);
+  const gitFilesToRemove = filesToRemove.filter((x) => !ignored.includes(x));
+  console.debug(`Files to remove: ${gitFilesToRemove.join(",")}`);
+  await currentRepo.rm(gitFilesToRemove);
   await currentRepo.commit(`Remove all files that are not part of ${targetRepo}`);
 }
 
