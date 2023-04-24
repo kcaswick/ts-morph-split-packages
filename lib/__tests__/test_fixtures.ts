@@ -19,8 +19,8 @@ export enum ProcessPhase {
   Initial = "Initial",
   BuildDependencyGraph = "BuildDependencyGraph",
   Map = "Map",
-  Move = "Move",
   Rewrite = "Rewrite",
+  Move = "Move",
 }
 
 export interface IBaseProcessPhaseState {
@@ -58,8 +58,9 @@ export type IProcessPhaseState =
   | IInitialPhaseState
   | IDependencyGraphPhaseState
   | IMapPhaseState
+  | IRewritePhaseState
   | IMovePhaseState
-  | IRewritePhaseState;
+  ;
 
 /* eslint-disable no-case-declarations */
 export async function advanceToPhase(
@@ -71,6 +72,18 @@ export async function advanceToPhase(
   startingState: Readonly<IInitialPhaseState | IDependencyGraphPhaseState>,
   getPackageMap: (madgeDependencyJsonPath: string) => PackageMapping
 ): Promise<IMapPhaseState>;
+// Multiphase rewrite overload
+export async function advanceToPhase(
+  endPhase: ProcessPhase.Rewrite,
+  startingState: Readonly<IInitialPhaseState | IDependencyGraphPhaseState | IMapPhaseState>,
+  getPackageMap: (madgeDependencyJsonPath: string) => PackageMapping
+): Promise<IRewritePhaseState>;
+// Single phase rewrite overload
+export async function advanceToPhase(
+  endPhase: ProcessPhase.Rewrite,
+  startingState: Readonly<IMapPhaseState>,
+  getPackageMap: (madgeDependencyJsonPath: string) => PackageMapping
+): Promise<IRewritePhaseState>;
 // Multiphase move overload
 export async function advanceToPhase(
   endPhase: ProcessPhase.Move,
@@ -80,14 +93,8 @@ export async function advanceToPhase(
 // Single phase move overload
 export async function advanceToPhase(
   endPhase: ProcessPhase.Move,
-  startingState: Readonly<IMapPhaseState>
+  startingState: Readonly<IRewritePhaseState>
 ): Promise<IMovePhaseState>;
-// Multiphase rewrite overload
-export async function advanceToPhase(
-  endPhase: ProcessPhase.Rewrite,
-  startingState: Readonly<IInitialPhaseState | IDependencyGraphPhaseState | IMapPhaseState>,
-  getPackageMap: (madgeDependencyJsonPath: string) => PackageMapping
-): Promise<IRewritePhaseState>;
 
 export async function advanceToPhase(
   endPhase: ProcessPhase,
@@ -117,6 +124,7 @@ export async function advanceToPhase(
         InputFileType.DependencyJson
       );
       currentState.currentPhase = ProcessPhase.BuildDependencyGraph;
+
       if (endPhase === currentState.currentPhase) break;
     // fall through to next phase
 
@@ -125,25 +133,30 @@ export async function advanceToPhase(
         throw new Error("getPackageMap is required to complete the Map state");
       currentState.packageMapping = getPackageMap(currentState.madgeDependencyJsonPath);
       currentState.currentPhase = ProcessPhase.Map;
+
       if (endPhase === currentState.currentPhase) break;
     // fall through to next phase
 
     case ProcessPhase.Map:
+      pushd(currentState.tempRepoPath);
+      const { project: modifiedProject } = await prepareTsMorph(currentState.packageMapping);
+      popd();
+      await modifiedProject.save();
+      await(<IMovePhaseState>currentState).tempRepo.commit("Rewrite imports", ["--all"]);
+      currentState.currentPhase = ProcessPhase.Rewrite;
+
+      if (endPhase === currentState.currentPhase) break;
+    // fall through to next phase
+
+    case ProcessPhase.Rewrite:
       const moveTasks = prepareGitMove(currentState.packageMapping);
       await executeGitMoveForRepos(currentState.tempRepo, moveTasks, currentState.packageMapping);
       currentState.currentPhase = ProcessPhase.Move;
+
       if (endPhase === currentState.currentPhase) break;
     // fall through to next phase
 
     case ProcessPhase.Move:
-      pushd(currentState.tempRepoPath);
-      const { project: modifiedProject, modifiedFiles } = await prepareTsMorph(
-        currentState.packageMapping
-      );
-      popd();
-      await modifiedProject.save();
-      await (<IMovePhaseState>currentState).tempRepo.commit("Rewrite imports", ["--all"]);
-      currentState.currentPhase = ProcessPhase.Rewrite;
       if (endPhase === currentState.currentPhase) break;
     // fall through to next phase
   }
