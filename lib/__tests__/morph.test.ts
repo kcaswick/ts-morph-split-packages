@@ -1,6 +1,7 @@
 import path from "path";
 import { ls, popd, pushd } from "shelljs";
 import simpleGit, { CheckRepoActions, SimpleGit } from "simple-git";
+import { Project } from "ts-morph";
 
 import { MapResult, PackageMapping } from "../mapping";
 import * as morph from "../morph";
@@ -69,18 +70,22 @@ describe("test morph", function () {
   }, 15000);
   test("prepareTsMorph simple repo test_fixtures pkg", async () => {
     // Arrange
-    const [tempRepoPath, _tempRepo, testState] = await arrangeRepoAndSnapshot(
-      "split/test_fixtures"
-    );
+    const [tempRepoPath, _tempRepo, mapState] = await arrangeRepoAndSnapshot();
 
     // Act
     pushd(tempRepoPath);
-    const modifiedProject = await morph.prepareTsMorph(testState.packageMapping);
+    const rewriteState = await advanceToPhase(ProcessPhase.Rewrite, mapState, loadSimpleMadge);
+
+    // Filter to just the files in the test_fixtures package
+    const moveState = await advanceToPhase(ProcessPhase.Move, rewriteState);
+    await mapState.tempRepo.checkout("split/test_fixtures");
+    const finalProject = new Project({
+      tsConfigFilePath: path.join(tempRepoPath, "tsconfig.json"),
+    });
     popd();
-    expect(modifiedProject).toBeDefined();
 
     // Assert
-    const importDeclarationsFlat = getInternalImportsFlat(modifiedProject.project);
+    const importDeclarationsFlat = getInternalImportsFlat(finalProject);
     const importDeclarationsFlatText = importDeclarationsFlat
       .map(importNodeToText(tempRepoPath))
       .sort();

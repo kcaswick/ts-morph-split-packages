@@ -1,5 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`test morph prepareTsMorph simple repo test_fixtures pkg: PackageMapping 1`] = `
+Array [
+  "lib\\\\package\\\\test_fixtures\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"new\\";",
+]
+`;
+
+exports[`test morph prepareTsMorph simple repo test_fixtures pkg: importDeclarationsFlatText 1`] = `
+Array [
+  "lib\\\\package\\\\test_fixtures\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"new\\";",
+]
+`;
+
+exports[`test morph prepareTsMorph simple repo test_fixtures pkg: tempRepo.status 1`] = `
+StatusSummary {
+  "ahead": 0,
+  "behind": 0,
+  "conflicted": Array [],
+  "created": Array [],
+  "current": "test_branch",
+  "deleted": Array [],
+  "detached": false,
+  "files": Array [],
+  "ignored": undefined,
+  "isClean": [Function],
+  "modified": Array [],
+  "not_added": Array [],
+  "renamed": Array [],
+  "staged": Array [],
+  "tracking": null,
+}
+`;
+
 exports[`test morph prepareTsMorph simple repo: importDeclarationsFlatText 1`] = `
 Array [
   "lib\\\\__tests__\\\\complexRepo.test.ts: import shell from \\"shelljs\\";",
@@ -49,47 +81,15 @@ Array [
 ]
 `;
 
-exports[`test morph prepareTsMorph simple repo test_fixtures pkg: PackageMapping 1`] = `
-Array [
-  "lib\\\\package\\\\test_fixtures\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"new\\";",
-]
-`;
-
-exports[`test morph prepareTsMorph simple repo test_fixtures pkg: importDeclarationsFlatText 1`] = `
-Array [
-  "lib\\\\package\\\\test_fixtures\\\\__tests__\\\\test_fixtures.ts: import { PackageMapping } from \\"new\\";",
-]
-`;
-
-exports[`test morph prepareTsMorph simple repo test_fixtures pkg: tempRepo.status 1`] = `
-StatusSummary {
-  "ahead": 0,
-  "behind": 0,
-  "conflicted": Array [],
-  "created": Array [],
-  "current": "test_branch",
-  "deleted": Array [],
-  "detached": false,
-  "files": Array [],
-  "ignored": undefined,
-  "isClean": [Function],
-  "modified": Array [],
-  "not_added": Array [],
-  "renamed": Array [],
-  "staged": Array [],
-  "tracking": null,
-}
-`;
-
 exports[`test morph save modified simple repo: tempRepo.status before 1`] = `
 StatusSummary {
   "ahead": 0,
   "behind": 0,
   "conflicted": Array [],
   "created": Array [],
-  "current": "split/ts-morph-split-packages",
+  "current": "HEAD",
   "deleted": Array [],
-  "detached": false,
+  "detached": true,
   "files": Array [],
   "ignored": undefined,
   "isClean": [Function],
