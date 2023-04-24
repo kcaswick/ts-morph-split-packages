@@ -93,41 +93,51 @@ export /* async */ function prepareTsMorph(
           .getExportDeclarations()
           .filter((e) => e.isModuleSpecifierRelative());
         [...importDeclarations, ...reExportDeclarations].forEach((declaration) => {
+          const importValue = declaration.getModuleSpecifierValue();
           const importPath =
-            declaration.getModuleSpecifierSourceFile()?.getFilePath() ??
-            declaration.getModuleSpecifierValue();
-          if (importPath === undefined || importPath.includes("node_modules")) {
+            declaration.getModuleSpecifierSourceFile()?.getFilePath() ?? importValue;
+          if (
+            importValue === undefined ||
+            importPath === undefined ||
+            importPath.includes("node_modules")
+          ) {
             // Skip imports that are already from outside packages
             // Also any exports that don't specify a module, so importPath cannot be undefined below
             return;
           }
 
           const mappedPath = mapping.mapPackage(importPath);
-          const isSameRepo = mappedPath && mappedPath.Repo === mappedSource?.Repo;
+          const isSameRepo =
+            mappedPath && (mappedPath.Repo === mappedSource?.Repo || mappedPath.Package === "N/A");
+          const newImport =
+            mappedPath && isSameRepo
+              ? sourceFile.getRelativePathAsModuleSpecifierTo(mappedPath.Path)
+              : mappedPath?.Package ?? "";
 
+          const { line, column } =
+            declaration === undefined
+              ? { line: 0, column: 0 }
+              : declaration.getSourceFile().getLineAndColumnAtPos(declaration.getStart());
           console.debug(
-            `${sourceFile.getFilePath()}:${declaration?.getStartLineNumber?.()}:${declaration.getStart()}: ${declaration.getText()} => "${
-              mappedPath
-                ? isSameRepo || mappedPath.Package === "N/A"
-                  ? declaration
-                      .getText()
-                      .replace(
-                        importPath,
-                        sourceFile.getRelativePathAsModuleSpecifierTo(mappedPath.Path)
-                      )
-                  : mappedPath.Package
+            `${sourceFile.getFilePath()}:${
+              declaration?.getStartLineNumber?.() ?? line
+            }:${column}: ${declaration.getText()} => ${
+              mappedPath && importValue !== newImport
+                ? `"${
+                    isSameRepo ? declaration.getText().replace(importValue, newImport) : newImport
+                  }"`
                 : "no change"
-            }" (${importPath})`
+            } (${importPath})`
           );
-          if (mappedPath) {
+          if (mappedPath && importValue !== newImport) {
             modifiedFiles.add(sourceFile);
-            if (isSameRepo || mappedPath.Package === "N/A") {
+            if (isSameRepo) {
               declaration.setModuleSpecifier(
                 // TODO: This should be relative to the sourceFile's mapped path, but we can't calculate that without a root path
-                sourceFile.getRelativePathAsModuleSpecifierTo(mappedPath.Path)
+                newImport
               );
             } else {
-              declaration.setModuleSpecifier(mappedPath.Package);
+              declaration.setModuleSpecifier(newImport);
             }
           }
         });
