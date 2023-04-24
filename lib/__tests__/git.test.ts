@@ -48,7 +48,7 @@ describe("prepareGitMove", () => {
     const result = sut.prepareGitMove(m);
     const newRepo = result.get("new");
     expect(newRepo).toBeDefined();
-    expect(newRepo).toContainEqual(["lib/mapping.ts", "src/mapping.ts"]);
+    expect(newRepo).toContainEqual(["lib/mapping.ts", "lib/package/new/mapping.ts"]);
     expect(newRepo).not.toContainEqual(["lib/index.ts", expect.any(String)]);
   });
   it("No moves needed", () => {
@@ -99,7 +99,7 @@ describe("executeGitMoveForRepo", () => {
     ).resolves;
     await results.toMatchSnapshot(`results from move to new`);
     expect(existsSync(join(tempRepoPath, "lib/index.ts"))).toBeFalsy();
-    expect(existsSync(join(tempRepoPath, "src/mapping.ts"))).toBeTruthy();
+    expect(existsSync(join(tempRepoPath, "lib/package/new/mapping.ts"))).toBeTruthy();
 
     await tempRepo.checkout(startCommitish);
 
@@ -107,7 +107,9 @@ describe("executeGitMoveForRepo", () => {
       sut.executeGitMoveForRepo(tempRepo, "test_fixtures", plan.get("test_fixtures")!, m)
     ).resolves;
     await resultsTestFixtures.toMatchSnapshot(`results from move to test_fixtures`);
-    expect(existsSync(join(tempRepoPath, "src/__tests__/test_fixtures.ts"))).toBeTruthy();
+    expect(
+      existsSync(join(tempRepoPath, "lib/package/test_fixtures/__tests__/test_fixtures.ts"))
+    ).toBeTruthy();
   }, 15000);
 });
 describe("executeGitMoveForRepos", () => {

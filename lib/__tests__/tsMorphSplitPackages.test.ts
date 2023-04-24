@@ -49,7 +49,7 @@ describe("tsMorphSplitPackages basic tests", () => {
     expect(result).toBeDefined();
     expect(result?.Path).toBe("lib/package/new/mapping.ts");
     expect(result).toMatchObject({
-      Path: "src/mapping.ts",
+      Path: "lib/package/new/mapping.ts",
       Repo: "new",
       Package: "new",
     });

@@ -19,7 +19,7 @@ Array [
     "moves": Array [
       Object {
         "from": "lib/__tests__/test_fixtures.ts",
-        "to": "lib/package/text_fixtures/__tests__/test_fixtures.ts",
+        "to": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
       },
     ],
   },
