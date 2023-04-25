@@ -124,9 +124,9 @@ export /* async */ function prepareTsMorph(
               declaration?.getStartLineNumber?.() ?? line
             }:${column}: ${declaration.getText()} => ${
               mappedPath && importValue !== newImport
-                ? `"${
+                ? `'${
                     isSameRepo ? declaration.getText().replace(importValue, newImport) : newImport
-                  }"`
+                  }'`
                 : "no change"
             } (${importPath})`
           );
@@ -186,12 +186,13 @@ function sourceFileRelativeMappedPath(
   sourceFile: SourceFile,
   mappedPath: ILocation
 ): string {
-  return mappedSource === undefined
-    ? sourceFile.getRelativePathAsModuleSpecifierTo(mappedPath.Path)
-    : sourceFile
-        .getDirectory()
-        .getDirectory(dirname(mappedSource.Path))
-        ?.getRelativePathAsModuleSpecifierTo(mappedPath.Path) ??
+  let moduleSpecifier =
+    mappedSource === undefined
+      ? sourceFile.getRelativePathAsModuleSpecifierTo(mappedPath.Path)
+      : sourceFile
+          .getDirectory()
+          .getDirectory(dirname(mappedSource.Path))
+          ?.getRelativePathAsModuleSpecifierTo(mappedPath.Path) ??
         // If getRelativePathAsModuleSpecifierTo is not available, we make an effort but don't handle all cases
         FileUtils.standardizeSlashes(
           relative(
@@ -199,6 +200,8 @@ function sourceFileRelativeMappedPath(
             mappedPath.Path.replace(/\/index?(\.d\.ts|\.ts|\.js)$/i, "")
           )
         ).replace(/((\.d\.ts$)|(\.[^/.]+$))/i, "");
+  moduleSpecifier = /^\.\.?\/?/.test(moduleSpecifier) ? moduleSpecifier : "./" + moduleSpecifier;
+  return moduleSpecifier;
 }
 
 export const __forTesting__ = { sourceFileRelativeMappedPath };

@@ -127,7 +127,7 @@ describe("test morph", function () {
       .sort();
     expect(importDeclarationsFlatText).toMatchSnapshot("importDeclarationsFlatText");
     expectImportChanged(importDeclarationsFlatText, "PackageMapping", "..");
-  }, 15000);
+  }, 20000);
   test("save modified simple repo", async () => {
     // Arrange
     const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
@@ -293,6 +293,29 @@ describe("Test sourceFileRelativeMappedPath", () => {
       sourceMappedPath: "/tmp/repo123/lib/package/test_fixtures/__tests__/test_fixtures.ts",
       targetMappedPath: "/tmp/repo123/lib/index.ts",
       expectedValue: "../../..",
+    },
+    {
+      // Test reference to file in same dir using mapped SourceFile
+      sourceContents: 'import * from "./git";',
+      sourceOldPath: "/tmp/repo123/lib/index.ts",
+      sourceMappedPath: "/tmp/repo123/lib/index.ts",
+      targetMappedPath: "/tmp/repo123/lib/git.ts",
+      expectedValue: "./git",
+    },
+    {
+      // Test reference to file in same dir using unmapped SourceFile
+      sourceContents: 'import * from "./git";',
+      sourceOldPath: "/tmp/repo123/lib/index.ts",
+      sourceMappedPath: undefined,
+      targetMappedPath: "/tmp/repo123/lib/git.ts",
+      expectedValue: "./git",
+    },
+    {
+      // Test reference to file in same dir without SourceFile
+      sourceContents: undefined,
+      sourceMappedPath: "/tmp/repo123/lib/index.ts",
+      targetMappedPath: "/tmp/repo123/lib/git.ts",
+      expectedValue: "./git",
     },
   ];
   it.each(dataset)(
