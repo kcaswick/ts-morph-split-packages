@@ -81,7 +81,28 @@ Array [
 ]
 `;
 
-exports[`executeGitMoveForRepos Respect .gitignore: results from executeGitMoveForRepos 1`] = `
+exports[`executeGitMoveForRepos Respect .gitignore for mapped file: results from executeGitMoveForRepos 1`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      },
+    ],
+  },
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "lib/package/new/mapping.ts",
+      },
+    ],
+  },
+]
+`;
+
+exports[`executeGitMoveForRepos Respect .gitignore for unmapped file: results from executeGitMoveForRepos 1`] = `
 Array [
   Object {
     "moves": Array [

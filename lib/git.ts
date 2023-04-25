@@ -57,11 +57,27 @@ export const executeGitMoveForRepo = async (
   console.debug(`Removing files not in ${targetRepo}`);
   await removeFilesNotInTargetRepo(currentRepo, targetRepo, mapping);
 
+  const throwMultipleFilesError = (x: Parameters<SimpleGit["mv"]>): string => {
+    throw new Error(`Expected a single file but got list ${JSON.stringify(x[0])}`);
+  };
+
+  const ignored =
+    moves.length > 0
+      ? await currentRepo.checkIgnore(
+          moves.map((x) => (typeof x[0] === "string" ? x[0] : throwMultipleFilesError(x)))
+        )
+      : [];
+  console.debug(`Skipping git ignored files: ${ignored.join(",")}`);
+  const movesInRepo = moves.filter(
+    (x) => !ignored.includes(typeof x[0] === "string" ? x[0] : throwMultipleFilesError(x))
+  );
+  console.debug(`Moves remaining: ${movesInRepo.length}`);
+
   console.debug(`Ensuring destination folders exist for ${targetRepo}`);
   const currentRepoPath = await currentRepo.revparse("--absolute-git-dir");
-  await ensureFoldersExist(moves.map((x) => join(currentRepoPath, "..", x[1])));
+  await ensureFoldersExist(movesInRepo.map((x) => join(currentRepoPath, "..", x[1])));
   console.debug(`Moving files for ${targetRepo}`);
-  const results = await Promise.allSettled(moves.map((x) => currentRepo.mv(...x)));
+  const results = await Promise.allSettled(movesInRepo.map((x) => currentRepo.mv(...x)));
   if (results.every((p) => p.status === "fulfilled")) {
     await currentRepo.commit(`Move all files for ${targetRepo} to their new locations`);
   }
@@ -71,7 +87,7 @@ export const executeGitMoveForRepo = async (
     (p) => p.status === "rejected"
   ) as PromiseRejectedResult[];
   if (rejectedPromises.length > 0) {
-    console.debug(`Rejected promises: ${rejectedPromises}`);
+    console.debug(`Rejected promises: ${JSON.stringify(rejectedPromises)}`);
     throw new AggregateError(rejectedPromises.map((p) => p.reason));
   }
 
