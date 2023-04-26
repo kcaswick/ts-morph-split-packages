@@ -26,6 +26,8 @@ Array [
 ]
 `;
 
+exports[`executeGitMoveForRepo No errors on empty plan: results from empty plan 1`] = `Array []`;
+
 exports[`executeGitMoveForRepo test setup successful and matches snapshot 1`] = `
 Map {
   "test_fixtures" => Array [

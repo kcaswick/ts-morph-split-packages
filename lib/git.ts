@@ -78,8 +78,17 @@ export const executeGitMoveForRepo = async (
   await ensureFoldersExist(movesInRepo.map((x) => join(currentRepoPath, "..", x[1])));
   console.debug(`Moving ${movesInRepo.length} files for ${targetRepo}`);
   const results = await Promise.allSettled(movesInRepo.map((x) => currentRepo.mv(...x)));
-  if (results.every((p) => p.status === "fulfilled")) {
-    await currentRepo.commit(`Move all files for ${targetRepo} to their new locations`);
+  const isPromiseFulfilled = <T>(p: PromiseSettledResult<T>) => p.status === "fulfilled";
+  if (results.length > 0 && results.every(isPromiseFulfilled)) {
+    try {
+      await currentRepo.commit(`Move all files for ${targetRepo} to their new locations`);
+    } catch (e) {
+      const fulfilledPromises = results.filter(isPromiseFulfilled);
+      console.debug(
+        `${fulfilledPromises.length} fulfilled promises: ${JSON.stringify(fulfilledPromises)}`
+      );
+      throw e;
+    }
   }
 
   // Throw if any failed.

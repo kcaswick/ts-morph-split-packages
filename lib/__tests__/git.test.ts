@@ -112,6 +112,13 @@ describe("executeGitMoveForRepo", () => {
       existsSync(join(tempRepoPath, "lib/package/test_fixtures/__tests__/test_fixtures.ts"))
     ).toBeTruthy();
   }, 15000);
+
+  it("No errors on empty plan", async () => {
+    const [tempRepoPath, tempRepo] = await checkoutTempSimpleRepo();
+    const { m, plan: _plan } = await buildPlan(tempRepoPath);
+    const results = expect(sut.executeGitMoveForRepo(tempRepo, "new", [], m)).resolves;
+    await results.toMatchSnapshot(`results from empty plan`);
+  }, 15000);
 });
 describe("executeGitMoveForRepos", () => {
   it("Should throw if branch split/any is present", async () => {
