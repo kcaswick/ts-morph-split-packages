@@ -37,12 +37,12 @@ export const prepareGitMove = (
 };
 
 const ensureFoldersExist = (targetPaths: string[]) => {
-  console.debug(`Target paths: ${targetPaths.join(",")}`);
+  console.debug(`${targetPaths.length} target paths: ${targetPaths.join(",")}`);
   const targetFolders = targetPaths
     .map((p) => dirname(p))
     .filter((value, index, self) => self.indexOf(value) === index)
     .sort((a, b) => (b.length === a.length ? a.localeCompare(b) : b.length - a.length));
-  console.debug(`Target folders: ${targetFolders.join(",")}`);
+  console.debug(`${targetFolders.length} target folders: ${targetFolders.join(",")}`);
   return Promise.all(targetFolders.map(ensureDir));
 };
 
@@ -67,7 +67,7 @@ export const executeGitMoveForRepo = async (
           moves.map((x) => (typeof x[0] === "string" ? x[0] : throwMultipleFilesError(x)))
         )
       : [];
-  console.debug(`Skipping git ignored files: ${ignored.join(",")}`);
+  console.debug(`Skipping ${ignored.length} git ignored files: ${ignored.join(",")}`);
   const movesInRepo = moves.filter(
     (x) => !ignored.includes(typeof x[0] === "string" ? x[0] : throwMultipleFilesError(x))
   );
@@ -76,7 +76,7 @@ export const executeGitMoveForRepo = async (
   console.debug(`Ensuring destination folders exist for ${targetRepo}`);
   const currentRepoPath = await currentRepo.revparse("--absolute-git-dir");
   await ensureFoldersExist(movesInRepo.map((x) => join(currentRepoPath, "..", x[1])));
-  console.debug(`Moving files for ${targetRepo}`);
+  console.debug(`Moving ${movesInRepo.length} files for ${targetRepo}`);
   const results = await Promise.allSettled(movesInRepo.map((x) => currentRepo.mv(...x)));
   if (results.every((p) => p.status === "fulfilled")) {
     await currentRepo.commit(`Move all files for ${targetRepo} to their new locations`);
@@ -87,7 +87,9 @@ export const executeGitMoveForRepo = async (
     (p) => p.status === "rejected"
   ) as PromiseRejectedResult[];
   if (rejectedPromises.length > 0) {
-    console.debug(`Rejected promises: ${JSON.stringify(rejectedPromises)}`);
+    console.debug(
+      `${rejectedPromises.length} rejected promises: ${JSON.stringify(rejectedPromises)}`
+    );
     throw new AggregateError(rejectedPromises.map((p) => p.reason));
   }
 
@@ -171,7 +173,7 @@ async function removeFilesNotInTargetRepo(
     .map((x) => x.Name.OldName);
   const ignored = await currentRepo.checkIgnore(filesToRemove);
   const gitFilesToRemove = filesToRemove.filter((x) => !ignored.includes(x));
-  console.debug(`Files to remove: ${gitFilesToRemove.join(",")}`);
+  console.debug(`${gitFilesToRemove.length} files to remove: ${gitFilesToRemove.join(",")}`);
   await currentRepo.rm(gitFilesToRemove);
   await currentRepo.commit(`Remove all files that are not part of ${targetRepo}`);
 }
@@ -185,9 +187,9 @@ const throwIfRepoNotReady = async (currentRepo: SimpleGit) => {
   const status = await currentRepo.status();
   if (!status.isClean()) {
     throw new Error(
-      `Current directory must not have any uncommitted changes, but found ${status.files.map(
-        (f) => f.path
-      )}`
+      `Current directory must not have any uncommitted changes, but found ${
+        status.files.length
+      }: ${status.files.map((f) => f.path)}`
     );
   }
 };
