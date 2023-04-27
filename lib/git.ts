@@ -108,7 +108,8 @@ export const executeGitMoveForRepo = async (
 export const executeGitMoveForRepos = async (
   currentRepo: SimpleGit,
   moves: Map<string, Parameters<SimpleGit["mv"]>[]>,
-  mapping: PackageMapping
+  mapping: PackageMapping,
+  baseRepoName: string = basename(process.cwd())
 ) => {
   // Check that no branches are named split/
   console.log("Checking for split branches");
@@ -129,8 +130,6 @@ export const executeGitMoveForRepos = async (
   }
 
   const startCommitish = await currentRepo.revparse(["HEAD"]);
-
-  const baseRepoName: string = basename(process.cwd());
 
   let moveResults = await Array.from(moves.entries()).reduce(
     async (lastProm, [repoPath, repoMoves]) => {
