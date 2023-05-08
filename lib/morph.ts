@@ -108,10 +108,10 @@ export /* async */ function prepareTsMorph(
           }
 
           const mappedPath = mapping.mapPackage(importPath);
-          const isSameRepo =
-            mappedPath && (mappedPath.Repo === mappedSource?.Repo || mappedPath.Package === "N/A");
+          const isSamePackage =
+            mappedPath && (mappedPath.Package === mappedSource?.Package || mappedPath.Package === "N/A");
           const newImport =
-            mappedPath && isSameRepo
+            mappedPath && isSamePackage
               ? sourceFileRelativeMappedPath(mappedSource, sourceFile, mappedPath)
               : mappedPath?.Package ?? "";
 
@@ -125,7 +125,9 @@ export /* async */ function prepareTsMorph(
             }:${column}: ${declaration.getText()} => ${
               mappedPath && importValue !== newImport
                 ? `'${
-                    isSameRepo ? declaration.getText().replace(importValue, newImport) : newImport
+                    isSamePackage
+                      ? declaration.getText().replace(importValue, newImport)
+                      : newImport
                   }'`
                 : "no change"
             } (${importPath})`
