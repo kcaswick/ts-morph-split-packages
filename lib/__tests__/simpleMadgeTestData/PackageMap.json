@@ -1,14 +1,20 @@
 {
   "OldPatterns": {
-    "dist": {
-      "Path": "src",
+    "lib/mapping": {
+      "Path": "lib/package/new/mapping",
       "Repo": "new",
       "Package": "new"
+    },
+    "lib/__tests__/test_": {
+      "Path": "lib/package/test_fixtures/__tests__/test_",
+      "Repo": "test_fixtures",
+      "Package": "test_fixtures"
     },
     "lib": {
       "Path": "lib",
       "Repo": "ts-morph-split-packages",
-      "Package": "N/A"
+      "Package": "N/A",
+      "Order": 10
     }
   }
 }

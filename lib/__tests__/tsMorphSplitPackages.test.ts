@@ -2,28 +2,16 @@
 import { createWriteStream } from "fs";
 import madge from "madge";
 import { promisify } from "util";
-import { PackageMapping } from "../index";
+
+import { loadSimpleMadge, simpleMadgeDependenciesPath } from "./test_fixtures";
 
 describe("tsMorphSplitPackages basic tests", () => {
-  const simpleMadgeConfigPath = "lib/__tests__/simpleMadgeTestData/PackageMap.json";
-  const simpleMadgeDependenciesPath = "lib/__tests__/simpleMadgeTestData/selfMadge.json";
-
   it("generate simpleMadgeTestData", async () => {
-    const m = await madge(
-      [
-        "lib/index.ts",
-        "./dist/cjs/index.cjs",
-        "dist/esm/index.mjs",
-        "./dist/index.js",
-        "./dist/index.d.ts",
-        "./dist/bundle.d.ts",
-      ],
-      {
-        baseDir: ".",
-        fileExtensions: ["ts", "tsx", "js", "jsx"],
-        tsConfig: "tsconfig.json",
-      }
-    );
+    const m = await madge(["lib/"], {
+      baseDir: ".",
+      fileExtensions: ["ts", "tsx", "js", "jsx"],
+      tsConfig: "tsconfig.json",
+    });
     expect(m.warnings()).toMatchInlineSnapshot(`
       Object {
         "skipped": Array [],
@@ -39,7 +27,6 @@ describe("tsMorphSplitPackages basic tests", () => {
     try {
       const dependenciesJson = JSON.stringify(dependencies, undefined, 2);
       await promisify(
-        // eslint-disable-next-line no-unused-vars
         s.write.bind(s) as (chunk: string, _?: (error: Error | null | undefined) => void) => boolean
       )(dependenciesJson);
     } catch (err) {
@@ -51,12 +38,6 @@ describe("tsMorphSplitPackages basic tests", () => {
     }
   });
 
-  function loadSimpleMadge() {
-    const m = new PackageMapping();
-    m.getPackageMap(simpleMadgeDependenciesPath, simpleMadgeConfigPath);
-    return m;
-  }
-
   it("test loading simpleMadgeTestData", () => {
     const m = loadSimpleMadge();
     expect(m).toMatchSnapshot();
@@ -64,11 +45,11 @@ describe("tsMorphSplitPackages basic tests", () => {
 
   it("test mapPackage", () => {
     const m = loadSimpleMadge();
-    const result = m.mapPackage("dist/index.js");
+    const result = m.mapPackage("lib/mapping.ts");
     expect(result).toBeDefined();
-    expect(result?.Path).toBe("src/index.js");
+    expect(result?.Path).toBe("lib/package/new/mapping.ts");
     expect(result).toMatchObject({
-      Path: "src/index.js",
+      Path: "lib/package/new/mapping.ts",
       Repo: "new",
       Package: "new",
     });
@@ -80,91 +61,119 @@ describe("tsMorphSplitPackages basic tests", () => {
     expect(result).toMatchInlineSnapshot(`
       "[
         {
-          \\"OldName\\": \\"dist/bundle.d.ts\\",
+          \\"OldName\\": \\"lib/mapping.ts\\",
           \\"NewRepo\\": \\"new\\",
           \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/bundle.d.ts\\",
+          \\"NewName\\": \\"lib/package/new/mapping.ts\\",
           \\"Dependency Count\\": 0,
           \\"Package Dependencies\\": [],
           \\"dependencies\\": []
         },
         {
-          \\"OldName\\": \\"dist/cjs/index.cjs\\",
-          \\"NewRepo\\": \\"new\\",
-          \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/cjs/index.cjs\\",
+          \\"OldName\\": \\"lib/__tests__/test_fixtures.ts\\",
+          \\"NewRepo\\": \\"test_fixtures\\",
+          \\"NewPackage\\": \\"test_fixtures\\",
+          \\"NewName\\": \\"lib/package/test_fixtures/__tests__/test_fixtures.ts\\",
           \\"Dependency Count\\": 0,
           \\"Package Dependencies\\": [],
           \\"dependencies\\": []
         },
         {
-          \\"OldName\\": \\"dist/esm/index.mjs\\",
-          \\"NewRepo\\": \\"new\\",
-          \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/esm/index.mjs\\",
-          \\"Dependency Count\\": 0,
-          \\"Package Dependencies\\": [],
-          \\"dependencies\\": []
-        },
-        {
-          \\"OldName\\": \\"dist/index.d.ts\\",
-          \\"NewRepo\\": \\"new\\",
-          \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/index.d.ts\\",
+          \\"OldName\\": \\"lib/__tests__/complexRepo.test.ts\\",
+          \\"NewRepo\\": \\"ts-morph-split-packages\\",
+          \\"NewPackage\\": \\"N/A\\",
+          \\"NewName\\": \\"lib/__tests__/complexRepo.test.ts\\",
           \\"Dependency Count\\": 1,
           \\"Package Dependencies\\": [],
           \\"dependencies\\": [
-            \\"new:src/mapping.d.ts\\"
+            \\"ts-morph-split-packages:lib/index.ts\\"
           ]
         },
         {
-          \\"OldName\\": \\"dist/index.js\\",
-          \\"NewRepo\\": \\"new\\",
-          \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/index.js\\",
-          \\"Dependency Count\\": 1,
-          \\"Package Dependencies\\": [],
+          \\"OldName\\": \\"lib/__tests__/git.test.ts\\",
+          \\"NewRepo\\": \\"ts-morph-split-packages\\",
+          \\"NewPackage\\": \\"N/A\\",
+          \\"NewName\\": \\"lib/__tests__/git.test.ts\\",
+          \\"Dependency Count\\": 3,
+          \\"Package Dependencies\\": [
+            \\"new\\",
+            \\"test_fixtures\\"
+          ],
           \\"dependencies\\": [
-            \\"new:src/mapping.js\\"
+            \\"test_fixtures:lib/package/test_fixtures/__tests__/test_fixtures.ts\\",
+            \\"ts-morph-split-packages:lib/git.ts\\",
+            \\"new:lib/package/new/mapping.ts\\"
           ]
         },
         {
-          \\"OldName\\": \\"dist/mapping.d.ts\\",
-          \\"NewRepo\\": \\"new\\",
-          \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/mapping.d.ts\\",
-          \\"Dependency Count\\": 0,
-          \\"Package Dependencies\\": [],
-          \\"dependencies\\": []
+          \\"OldName\\": \\"lib/__tests__/morph.test.ts\\",
+          \\"NewRepo\\": \\"ts-morph-split-packages\\",
+          \\"NewPackage\\": \\"N/A\\",
+          \\"NewName\\": \\"lib/__tests__/morph.test.ts\\",
+          \\"Dependency Count\\": 3,
+          \\"Package Dependencies\\": [
+            \\"new\\",
+            \\"test_fixtures\\"
+          ],
+          \\"dependencies\\": [
+            \\"test_fixtures:lib/package/test_fixtures/__tests__/test_fixtures.ts\\",
+            \\"new:lib/package/new/mapping.ts\\",
+            \\"ts-morph-split-packages:lib/morph.ts\\"
+          ]
         },
         {
-          \\"OldName\\": \\"dist/mapping.js\\",
-          \\"NewRepo\\": \\"new\\",
-          \\"NewPackage\\": \\"new\\",
-          \\"NewName\\": \\"src/mapping.js\\",
-          \\"Dependency Count\\": 0,
-          \\"Package Dependencies\\": [],
-          \\"dependencies\\": []
+          \\"OldName\\": \\"lib/__tests__/tsMorphSplitPackages.test.ts\\",
+          \\"NewRepo\\": \\"ts-morph-split-packages\\",
+          \\"NewPackage\\": \\"N/A\\",
+          \\"NewName\\": \\"lib/__tests__/tsMorphSplitPackages.test.ts\\",
+          \\"Dependency Count\\": 1,
+          \\"Package Dependencies\\": [
+            \\"test_fixtures\\"
+          ],
+          \\"dependencies\\": [
+            \\"test_fixtures:lib/package/test_fixtures/__tests__/test_fixtures.ts\\"
+          ]
+        },
+        {
+          \\"OldName\\": \\"lib/git.ts\\",
+          \\"NewRepo\\": \\"ts-morph-split-packages\\",
+          \\"NewPackage\\": \\"N/A\\",
+          \\"NewName\\": \\"lib/git.ts\\",
+          \\"Dependency Count\\": 1,
+          \\"Package Dependencies\\": [
+            \\"new\\"
+          ],
+          \\"dependencies\\": [
+            \\"new:lib/package/new/mapping.ts\\"
+          ]
         },
         {
           \\"OldName\\": \\"lib/index.ts\\",
           \\"NewRepo\\": \\"ts-morph-split-packages\\",
           \\"NewPackage\\": \\"N/A\\",
           \\"NewName\\": \\"lib/index.ts\\",
-          \\"Dependency Count\\": 1,
-          \\"Package Dependencies\\": [],
+          \\"Dependency Count\\": 3,
+          \\"Package Dependencies\\": [
+            \\"new\\"
+          ],
           \\"dependencies\\": [
-            \\"ts-morph-split-packages:lib/mapping.ts\\"
+            \\"ts-morph-split-packages:lib/git.ts\\",
+            \\"new:lib/package/new/mapping.ts\\",
+            \\"ts-morph-split-packages:lib/morph.ts\\"
           ]
         },
         {
-          \\"OldName\\": \\"lib/mapping.ts\\",
+          \\"OldName\\": \\"lib/morph.ts\\",
           \\"NewRepo\\": \\"ts-morph-split-packages\\",
           \\"NewPackage\\": \\"N/A\\",
-          \\"NewName\\": \\"lib/mapping.ts\\",
-          \\"Dependency Count\\": 0,
-          \\"Package Dependencies\\": [],
-          \\"dependencies\\": []
+          \\"NewName\\": \\"lib/morph.ts\\",
+          \\"Dependency Count\\": 1,
+          \\"Package Dependencies\\": [
+            \\"new\\"
+          ],
+          \\"dependencies\\": [
+            \\"new:lib/package/new/mapping.ts\\"
+          ]
         }
       ]"
     `);
@@ -176,7 +185,11 @@ describe("tsMorphSplitPackages basic tests", () => {
     expect(result).toMatchInlineSnapshot(`
       Object {
         "new": Array [],
-        "ts-morph-split-packages": Array [],
+        "test_fixtures": Array [],
+        "ts-morph-split-packages": Array [
+          "test_fixtures",
+          "new",
+        ],
       }
     `);
   });

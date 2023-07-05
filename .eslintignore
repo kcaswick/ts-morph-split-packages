@@ -1,6 +1,7 @@
 coverage
 dist
 node_modules
+plopfile.js
 release
 solution
 temp

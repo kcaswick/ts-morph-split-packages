@@ -1,0 +1,27 @@
+/**
+*
+* Tests for {{fileName}}
+*
+*/
+import { loadSimpleMadge } from "./test_fixtures";
+import {{camelCase fileName}} from '../{{fileName}}';
+describe('{{fileName}}', () => {
+  it('Expect to not log errors in console', () => {
+    const spy = jest.spyOn(global.console, 'error');
+    const m = loadSimpleMadge();
+    {{camelCase fileName}}(m);
+    expect(spy).not.toHaveBeenCalled();
+  });
+  it('Expect to have additional unit tests specified', () => {
+    expect(true).toEqual(false);
+  });
+  /**
+  * Unskip this test to use it
+  * @see {@link https://jestjs.io/docs/en/api#testskipname-fn}
+  */
+  it.skip('Should render and match the snapshot', () => {
+    const m = loadSimpleMadge();
+    const result = {{camelCase fileName}}(m);
+    expect(result).toMatchSnapshot();
+  });
+});

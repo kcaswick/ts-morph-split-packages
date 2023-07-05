@@ -1,9 +1,11 @@
+/// <reference types="jest" />
 // X import assert from "assert";
 import { createWriteStream /* , mkdirSync */ } from "fs";
+import shell from "shelljs";
 // X import {cruise} from "dependency-cruiser";
 import { promisify } from "util";
+
 import { PackageMapping } from "../index";
-import shell from "shelljs";
 // X import zx, { fs } from "zx";
 
 describe("complex repository tests", () => {
@@ -19,14 +21,16 @@ describe("complex repository tests", () => {
     // X zx.cd("../dependency-cruiser");
     const depcruise =
       // X await zx.$`npx depcruise src --include-only "^src" --config --output-type json`;
-      shell.exec('npx depcruise src --include-only "^src" --config --output-type json');
+      shell.exec('npx depcruise src --include-only "^src" --config --output-type json', {
+        silent: true,
+      });
 
     shell.cd(originalWorkingDirectory);
 
     // X zx.cd(originalWorkingDirectory);
     // X const dependencies = m.obj();
     expect(depcruise.stdout).toBeDefined();
-    expect(depcruise.stdout).not.toBe("");
+    expect(depcruise.stdout).toMatch(/"source":\s*"src\/cli\/index\.js"/);
 
     const s = createWriteStream(complexDependenciesPath, {
       flags: "w+",
@@ -34,7 +38,6 @@ describe("complex repository tests", () => {
     try {
       const dependenciesJson = depcruise.stdout;
       await promisify(
-        // eslint-disable-next-line no-unused-vars
         s.write.bind(s) as (chunk: string, _?: (error: Error | null | undefined) => void) => boolean
       )(dependenciesJson);
     } catch (err) {
@@ -44,7 +47,7 @@ describe("complex repository tests", () => {
     } finally {
       s.close();
     }
-  });
+  }, 15000);
 
   function load() {
     const m = new PackageMapping();

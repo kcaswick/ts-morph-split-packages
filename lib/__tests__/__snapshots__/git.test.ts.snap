@@ -1,0 +1,164 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`executeGitMoveForRepo Execute default plan: results from move to new 1`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "lib/package/new/mapping.ts",
+      },
+    ],
+  },
+]
+`;
+
+exports[`executeGitMoveForRepo Execute default plan: results from move to test_fixtures 1`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      },
+    ],
+  },
+]
+`;
+
+exports[`executeGitMoveForRepo No errors on empty plan: results from empty plan 1`] = `Array []`;
+
+exports[`executeGitMoveForRepo test setup successful and matches snapshot 1`] = `
+Map {
+  "test_fixtures" => Array [
+    Array [
+      "lib/__tests__/test_fixtures.ts",
+      "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+    ],
+  ],
+  "new" => Array [
+    Array [
+      "lib/mapping.ts",
+      "lib/package/new/mapping.ts",
+    ],
+  ],
+}
+`;
+
+exports[`executeGitMoveForRepos Complete simple split 1`] = `
+Map {
+  "test_fixtures" => Array [
+    Array [
+      "lib/__tests__/test_fixtures.ts",
+      "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+    ],
+  ],
+  "new" => Array [
+    Array [
+      "lib/mapping.ts",
+      "lib/package/new/mapping.ts",
+    ],
+  ],
+}
+`;
+
+exports[`executeGitMoveForRepos Complete simple split 2`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      },
+    ],
+  },
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "lib/package/new/mapping.ts",
+      },
+    ],
+  },
+]
+`;
+
+exports[`executeGitMoveForRepos Respect .gitignore for mapped file 1`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      },
+    ],
+  },
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "lib/package/new/mapping.ts",
+      },
+    ],
+  },
+]
+`;
+
+exports[`executeGitMoveForRepos Respect .gitignore for mapped file: results from executeGitMoveForRepos 1`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      },
+    ],
+  },
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "lib/package/new/mapping.ts",
+      },
+    ],
+  },
+]
+`;
+
+exports[`executeGitMoveForRepos Respect .gitignore for unmapped file: results from executeGitMoveForRepos 1`] = `
+Array [
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/__tests__/test_fixtures.ts",
+        "to": "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+      },
+    ],
+  },
+  Object {
+    "moves": Array [
+      Object {
+        "from": "lib/mapping.ts",
+        "to": "lib/package/new/mapping.ts",
+      },
+    ],
+  },
+]
+`;
+
+exports[`prepareGitMove Should run and match the snapshot 1`] = `
+Map {
+  "test_fixtures" => Array [
+    Array [
+      "lib/__tests__/test_fixtures.ts",
+      "lib/package/test_fixtures/__tests__/test_fixtures.ts",
+    ],
+  ],
+  "new" => Array [
+    Array [
+      "lib/mapping.ts",
+      "lib/package/new/mapping.ts",
+    ],
+  ],
+}
+`;

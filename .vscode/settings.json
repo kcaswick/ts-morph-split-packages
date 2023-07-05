@@ -1,3 +1,7 @@
 {
-  "eslint.options": {"overrideConfigFile": "./package.json"},
+  "eslint.options": {
+    "overrideConfigFile": "./package.json"
+  },
+  "jest.jestCommandLine": "npm run test -- ",
+  "sarif-viewer.connectToGithubCodeScanning": "off",
 }

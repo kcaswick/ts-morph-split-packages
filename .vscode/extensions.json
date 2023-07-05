@@ -4,6 +4,7 @@
     "esbenp.prettier-vscode",
     "gruntfuggly.todo-tree",
     "editorconfig.editorconfig",
-    "orta.vscode-jest"
+    "orta.vscode-jest",
+    "jpmartinez.plop-generator"
   ]
 }
