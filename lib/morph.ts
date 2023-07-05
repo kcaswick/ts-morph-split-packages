@@ -1,7 +1,6 @@
 import { FileUtils } from "@ts-morph/common";
 import { basename, dirname, relative } from "path";
 import { Project, SourceFile, ts } from "ts-morph";
-import { getImportDeclarationsForSymbols } from "ts-morph-helpers";
 
 import { ILocation, PackageMapping } from "./mapping";
 
@@ -19,15 +18,12 @@ import { ILocation, PackageMapping } from "./mapping";
  *  path or not. Optional, defaults to the name of the current working directory.
  */
 export /* async */ function prepareTsMorph(
-  mapping: PackageMapping,
-  currentRepo: string = basename(process.cwd())
+  mapping: PackageMapping
 ): Promise<{ project: Project; modifiedFiles: Set<SourceFile> }> {
   // Read the existing project
   const project = new Project({
     tsConfigFilePath: "tsconfig.json",
   });
-
-  const languageService = project.getLanguageService();
 
   const sourceFiles = project.getSourceFiles();
   const modifiedFiles = new Set<SourceFile>();
@@ -35,62 +31,6 @@ export /* async */ function prepareTsMorph(
   sourceFiles
     .filter((sourceFile) => !sourceFile.getFilePath()?.includes("node_modules"))
     .forEach((sourceFile) => {
-      //   try {
-      //     getImportDeclarationsForSymbols(
-      //     languageService.getProgram().getTypeChecker().,
-      //     sourceFile
-      //   ).forEach((importDeclaration) => {
-      //     const importPath = importDeclaration.getModuleSpecifierValue();
-      //     const mappedPath = mapping.mapPackage(importPath);
-
-      //     if (mappedPath) {
-      //       if (mappedPath.Repo === currentRepo) {
-      //         importDeclaration.setModuleSpecifier(mappedPath.Path);
-      //       } else {
-      //         importDeclaration.setModuleSpecifier(mappedPath.Package);
-      //       }
-      //     }
-      //   });
-      // } catch (e) {
-      //   console.error(e);
-      // }
-
-      // // try {
-      // sourceFile.forEachChild((node) => {
-      //   if (ts.isImportDeclaration(node)) {
-      //     const importPath = node.moduleSpecifier.getText();
-      //     const mappedPath = mapping.mapPackage(importPath);
-      //     const isSameRepo = mappedPath && mappedPath.Repo === currentRepo;
-
-      //     console.debug(
-      //       `${sourceFile.fileName}:${(
-      //         node as any
-      //       )?.getStartLineNumber?.()}:${node.getStart()}: ${node.getText()} => "${
-      //         mappedPath
-      //           ? isSameRepo
-      //             ? node.getText().replace(importPath, mappedPath.Path)
-      //             : mappedPath.Package
-      //           : "no change"
-      //       }" (${importPath})`
-      //     );
-      //     if (mappedPath) {
-      //       if (isSameRepo) {
-      //         modifiedFiles.add(
-      //           project.updateSourceFile(
-      //             sourceFile.fileName,
-      //             sourceFile.text.replace(importPath, mappedPath.Path)
-      //           )
-      //         );
-      //       } else {
-      //         (node as any).setModuleSpecifier(mappedPath.Package);
-      //       }
-      //     }
-      //   }
-      // });
-      // // } catch (e) {
-      // //   console.error(e);
-      // // }
-
       try {
         const mappedSource = mapping.mapPackage(sourceFile.getFilePath());
 
@@ -114,7 +54,8 @@ export /* async */ function prepareTsMorph(
 
           const mappedPath = mapping.mapPackage(importPath);
           const isSamePackage =
-            mappedPath && (mappedPath.Package === mappedSource?.Package || mappedPath.Package === "N/A");
+            mappedPath &&
+            (mappedPath.Package === mappedSource?.Package || mappedPath.Package === "N/A");
           const newImport =
             mappedPath && isSamePackage
               ? sourceFileRelativeMappedPath(mappedSource, sourceFile, mappedPath)
@@ -145,40 +86,6 @@ export /* async */ function prepareTsMorph(
       } catch (e) {
         console.error(e);
       }
-
-      // try {
-      //   sourceFile.statements.forEach((statement) => {
-      //     if (ts.isImportDeclaration(statement)) {
-      //       const importPath = (statement as any).getModuleSpecifierValue();
-      //       const mappedPath = mapping.mapPackage(importPath);
-      //       if (mappedPath) {
-      //         if (mappedPath.Repo === currentRepo) {
-      //           (statement as any).setModuleSpecifier(mappedPath.Path);
-      //         } else {
-      //           (statement as any).setModuleSpecifier(mappedPath.Package);
-      //         }
-      //       }
-      //     }
-      //   });
-      // } catch (e) {
-      //   console.error(e);
-      // }
-
-      // try {
-      //   (sourceFile as any).imports.forEach((importDeclaration: ImportDeclaration) => {
-      //     const importPath = importDeclaration.getModuleSpecifierValue();
-      //     const mappedPath = mapping.mapPackage(importPath);
-      //     if (mappedPath) {
-      //       if (mappedPath.Repo === currentRepo) {
-      //         importDeclaration.setModuleSpecifier(mappedPath.Path);
-      //       } else {
-      //         importDeclaration.setModuleSpecifier(mappedPath.Package);
-      //       }
-      //     }
-      //   });
-      // } catch (e) {
-      //   console.error(e);
-      // }
     });
 
   return Promise.resolve({ project, modifiedFiles });

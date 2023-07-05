@@ -1,3 +1,4 @@
+/// <reference types="jest" />
 import { promises as fs } from "fs"; // For workaround
 import path from "path";
 import { ls, popd, pushd } from "shelljs";
@@ -166,7 +167,7 @@ describe("test morph", function () {
           ));
 
           const { project: modifiedProject, modifiedFiles: modifiedFilesSet } =
-            await morph.prepareTsMorph(testState.packageMapping, targetRepo);
+            await morph.prepareTsMorph(testState.packageMapping);
           console.debug(
             `modifiedFilesSet.size for '${targetRepo}': ${modifiedFilesSet.size}`,
             modifiedFilesSet
