@@ -6,6 +6,11 @@ import { getImportDeclarationsForSymbols } from "ts-morph-helpers";
 import { ILocation, PackageMapping } from "./mapping";
 
 /**
+ * Module that contains functions for interacting with ts-morph. Primarily, this is used to update imports to their new locations.
+ * @module
+ */
+
+/**
  * Update all imports in the current project based on the provided mapping.
  *
  * @returns Updated, but not saved, project
@@ -179,10 +184,15 @@ export /* async */ function prepareTsMorph(
   return Promise.resolve({ project, modifiedFiles });
 }
 
-/** This function returns a relative path from the source file to the mapped path.
-The mapped source path is used to resolve the relative path. If the mapped source path is not available, we use the current source file.
-If the mapped source path is not available, we use the current source file. If there is no mapped source path, we use the current source file.
-*/
+/**
+ * This function returns a relative path from the source file to the mapped path.
+ * The mapped source path is used to resolve the relative path. If the mapped source path is not available, we use the current source file.
+ * If the mapped source path is not available, we use the current source file. If there is no mapped source path, we use the current source file.
+ * @param mappedSource The mapped source location, if available.
+ * @param sourceFile The current source file.
+ * @param mappedPath The mapped path to get a relative path to.
+ * @returns A relative path from the source file to the mapped path.
+ */
 function sourceFileRelativeMappedPath(
   mappedSource: ILocation | undefined,
   sourceFile: SourceFile,
